@@ -1,5 +1,5 @@
 {
-  "name": "receiptr-app",
+  "name": "receiptr",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -24,7 +24,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.16",
     "@types/node": "^20",
     "@types/nodemailer": "^7.0.3",
     "@types/react": "^19",
