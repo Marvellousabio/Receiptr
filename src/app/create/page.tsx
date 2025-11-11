@@ -145,7 +145,7 @@ export default function CreateReceipt() {
                 <input
                   type="text"
                   id="customerName"
-                  className="input"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Enter customer name"
@@ -158,7 +158,7 @@ export default function CreateReceipt() {
                 </label>
                 <select
                   id="paymentMethod"
-                  className="input"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 >
@@ -178,7 +178,7 @@ export default function CreateReceipt() {
               <button
                 type="button"
                 onClick={addItem}
-                className="btn btn-secondary text-sm"
+                className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
               >
                 Add Item
               </button>
@@ -193,7 +193,7 @@ export default function CreateReceipt() {
                     </label>
                     <input
                       type="text"
-                      className="input"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       value={item.description}
                       onChange={(e) => updateItem(index, 'description', e.target.value)}
                       placeholder="Item description"
@@ -208,7 +208,7 @@ export default function CreateReceipt() {
                       type="number"
                       min="1"
                       step="1"
-                      className="input"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
                       required
@@ -222,7 +222,7 @@ export default function CreateReceipt() {
                       type="number"
                       min="0"
                       step="0.01"
-                      className="input"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       value={item.price}
                       onChange={(e) => updateItem(index, 'price', parseFloat(e.target.value) || 0)}
                       placeholder="0.00"
@@ -233,7 +233,7 @@ export default function CreateReceipt() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Total
                     </label>
-                    <div className="input bg-gray-50">
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50">
                       ₦{(item.quantity * item.price).toLocaleString()}
                     </div>
                   </div>
@@ -241,7 +241,7 @@ export default function CreateReceipt() {
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
-                      className="btn btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50 mb-0"
+                      className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mb-0"
                     >
                       Remove
                     </button>
@@ -275,14 +275,14 @@ export default function CreateReceipt() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="btn btn-secondary"
+              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating Receipt...' : 'Create Receipt'}
             </button>

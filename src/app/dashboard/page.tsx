@@ -138,7 +138,7 @@ export default function Dashboard() {
               <input
                 type="text"
                 placeholder="Search by customer name or receipt number..."
-                className="input"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -146,7 +146,7 @@ export default function Dashboard() {
             <div>
               <input
                 type="date"
-                className="input"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Filter by date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
@@ -171,7 +171,7 @@ export default function Dashboard() {
               <div className="mt-6">
                 <Link
                   href="/create"
-                  className="btn btn-primary"
+                  className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Create Receipt
                 </Link>

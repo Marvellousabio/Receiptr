@@ -78,7 +78,7 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="input mt-1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-1"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -94,7 +94,7 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="input mt-1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-1"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -105,7 +105,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Signing in...' : 'Sign in'}
               </button>
