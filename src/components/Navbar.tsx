@@ -2,6 +2,8 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const { data: session, status } = useSession();
