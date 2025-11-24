@@ -149,6 +149,14 @@ export default function Dashboard() {
       <Navbar />
 
       <div className="flex">
+        {/* Mobile Sidebar Backdrop */}
+        {mobileSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
         <div
           className={`bg-primary shadow-sm transition-all duration-300 fixed inset-y-0 left-0 z-50 md:relative md:min-h-screen ${
@@ -209,28 +217,37 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex justify-between items-center mb-8">
+        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-primary">
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary">
                 {activeTab === 'overview' && 'Overview'}
                 {activeTab === 'receipts' && 'Receipts'}
                 {activeTab === 'settings' && 'Business Settings'}
               </h1>
-              <p className="text-secondary mt-1">
+              <p className="text-secondary mt-1 text-sm sm:text-base">
                 {activeTab === 'overview' && 'Manage your receipts and business profile'}
                 {activeTab === 'receipts' && 'View and manage your receipts'}
                 {activeTab === 'settings' && 'Update your business information'}
               </p>
             </div>
-            {activeTab !== 'settings' && (
-              <Link
-                href="/create"
-                className="bg-accent text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+                className="md:hidden p-2 rounded-md text-primary hover:bg-secondary"
+                aria-label="Toggle sidebar"
               >
-                Create New Receipt
-              </Link>
-            )}
+                <Bars3Icon className="w-6 h-6" />
+              </button>
+              {activeTab !== 'settings' && (
+                <Link
+                  href="/create"
+                  className="bg-accent text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base whitespace-nowrap"
+                >
+                  Create New Receipt
+                </Link>
+              )}
+            </div>
           </div>
 
           {activeTab === 'overview' && (
@@ -329,62 +346,89 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-color">
-                      <thead className="bg-secondary">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Receipt #
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Customer
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Amount
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Payment
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-primary divide-y divide-color">
-                        {receipts.map((receipt) => (
-                          <tr key={receipt._id} className="hover:bg-secondary">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
-                              {receipt.receiptNumber}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              {receipt.customerName}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              ₦{receipt.total.toLocaleString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              {receipt.paymentMethod}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
-                              {new Date(receipt.createdAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              <Link
-                                href={`/receipts/${receipt.receiptNumber}`}
-                                className="text-blue-600 hover:text-blue-900"
-                                target="_blank"
-                              >
-                                View
-                              </Link>
-                            </td>
+                  <>
+                    {/* Mobile Card View */}
+                    <div className="block md:hidden space-y-4">
+                      {receipts.map((receipt) => (
+                        <div key={receipt._id} className="bg-primary p-4 rounded-lg shadow-sm border border-color">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-sm font-medium text-primary">{receipt.receiptNumber}</span>
+                            <span className="text-sm text-secondary">{new Date(receipt.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <div className="space-y-1 mb-3">
+                            <p className="text-sm text-primary"><span className="font-medium">Customer:</span> {receipt.customerName}</p>
+                            <p className="text-sm text-primary"><span className="font-medium">Amount:</span> ₦{receipt.total.toLocaleString()}</p>
+                            <p className="text-sm text-primary"><span className="font-medium">Payment:</span> {receipt.paymentMethod}</p>
+                          </div>
+                          <Link
+                            href={`/receipts/${receipt.receiptNumber}`}
+                            className="inline-block text-accent hover:text-blue-700 text-sm font-medium"
+                            target="_blank"
+                          >
+                            View Receipt →
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="min-w-full divide-y divide-color">
+                        <thead className="bg-secondary">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Receipt #
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Customer
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Amount
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Payment
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Date
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Actions
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="bg-primary divide-y divide-color">
+                          {receipts.map((receipt) => (
+                            <tr key={receipt._id} className="hover:bg-secondary">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
+                                {receipt.receiptNumber}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                {receipt.customerName}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                ₦{receipt.total.toLocaleString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                {receipt.paymentMethod}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
+                                {new Date(receipt.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                <Link
+                                  href={`/receipts/${receipt.receiptNumber}`}
+                                  className="text-blue-600 hover:text-blue-900"
+                                  target="_blank"
+                                >
+                                  View
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             </>
@@ -439,62 +483,89 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-color">
-                      <thead className="bg-secondary">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Receipt #
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Customer
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Amount
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Payment
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-primary divide-y divide-color">
-                        {receipts.map((receipt) => (
-                          <tr key={receipt._id} className="hover:bg-secondary">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
-                              {receipt.receiptNumber}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              {receipt.customerName}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              ₦{receipt.total.toLocaleString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              {receipt.paymentMethod}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
-                              {new Date(receipt.createdAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
-                              <Link
-                                href={`/receipts/${receipt.receiptNumber}`}
-                                className="text-blue-600 hover:text-blue-900"
-                                target="_blank"
-                              >
-                                View
-                              </Link>
-                            </td>
+                  <>
+                    {/* Mobile Card View */}
+                    <div className="block md:hidden space-y-4">
+                      {receipts.map((receipt) => (
+                        <div key={receipt._id} className="bg-primary p-4 rounded-lg shadow-sm border border-color">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-sm font-medium text-primary">{receipt.receiptNumber}</span>
+                            <span className="text-sm text-secondary">{new Date(receipt.createdAt).toLocaleDateString()}</span>
+                          </div>
+                          <div className="space-y-1 mb-3">
+                            <p className="text-sm text-primary"><span className="font-medium">Customer:</span> {receipt.customerName}</p>
+                            <p className="text-sm text-primary"><span className="font-medium">Amount:</span> ₦{receipt.total.toLocaleString()}</p>
+                            <p className="text-sm text-primary"><span className="font-medium">Payment:</span> {receipt.paymentMethod}</p>
+                          </div>
+                          <Link
+                            href={`/receipts/${receipt.receiptNumber}`}
+                            className="inline-block text-accent hover:text-blue-700 text-sm font-medium"
+                            target="_blank"
+                          >
+                            View Receipt →
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="min-w-full divide-y divide-color">
+                        <thead className="bg-secondary">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Receipt #
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Customer
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Amount
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Payment
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Date
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                              Actions
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="bg-primary divide-y divide-color">
+                          {receipts.map((receipt) => (
+                            <tr key={receipt._id} className="hover:bg-secondary">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
+                                {receipt.receiptNumber}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                {receipt.customerName}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                ₦{receipt.total.toLocaleString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                {receipt.paymentMethod}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
+                                {new Date(receipt.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                                <Link
+                                  href={`/receipts/${receipt.receiptNumber}`}
+                                  className="text-blue-600 hover:text-blue-900"
+                                  target="_blank"
+                                >
+                                  View
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             </>
