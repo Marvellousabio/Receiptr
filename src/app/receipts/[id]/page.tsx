@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { PrinterIcon, PhoneIcon, EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline';
 
 interface Receipt {
   _id: string;
@@ -19,6 +20,8 @@ interface Receipt {
   createdAt: string;
   userId: {
     businessName: string;
+    address: string;
+    phone: string;
     logoUrl: string;
     vatRate: number;
   };
@@ -78,56 +81,60 @@ export default function ReceiptView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-primary flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
       </div>
     );
   }
 
   if (error || !receipt) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-primary flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Receipt Not Found</h1>
-          <p className="text-gray-600">{error || 'The receipt you are looking for does not exist.'}</p>
+          <h1 className="text-2xl font-bold text-primary mb-4">Receipt Not Found</h1>
+          <p className="text-secondary">{error || 'The receipt you are looking for does not exist.'}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-primary py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Action Buttons */}
         <div className="mb-6 flex flex-wrap gap-3 justify-center print:hidden">
           <button
             onClick={handlePrint}
-            className="btn btn-secondary"
+            className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
-            🖨️ Print
+            <PrinterIcon className="w-5 h-5" />
+            Print
           </button>
           <button
             onClick={() => handleShare('whatsapp')}
-            className="btn bg-green-600 text-white hover:bg-green-700"
+            className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
-            📱 WhatsApp
+            <PhoneIcon className="w-5 h-5" />
+            WhatsApp
           </button>
           <button
             onClick={() => handleShare('email')}
-            className="btn btn-secondary"
+            className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
-            ✉️ Email
+            <EnvelopeIcon className="w-5 h-5" />
+            Email
           </button>
           <button
             onClick={() => handleShare('copy')}
-            className="btn btn-secondary"
+            className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
-            🔗 Copy Link
+            <LinkIcon className="w-5 h-5" />
+            Copy Link
           </button>
         </div>
 
         {/* Receipt */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-secondary shadow-lg rounded-lg overflow-hidden">
           <div className="p-8" id="receipt-content">
             {/* Header */}
             <div className="text-center mb-8">
@@ -138,10 +145,16 @@ export default function ReceiptView() {
                   className="w-20 h-20 mx-auto mb-4 object-contain"
                 />
               )}
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-primary mb-2">
                 {receipt.userId.businessName || 'Business Name'}
               </h1>
-              <div className="text-gray-600">
+              {receipt.userId.address && (
+                <p className="text-secondary mb-1">{receipt.userId.address}</p>
+              )}
+              {receipt.userId.phone && (
+                <p className="text-secondary mb-1">{receipt.userId.phone}</p>
+              )}
+              <div className="text-secondary">
                 <p>Receipt #{receipt.receiptNumber}</p>
                 <p>{new Date(receipt.createdAt).toLocaleDateString()}</p>
               </div>
@@ -149,15 +162,15 @@ export default function ReceiptView() {
 
             {/* Customer Info */}
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Customer</h2>
-              <p className="text-gray-700">{receipt.customerName}</p>
+              <h2 className="text-lg font-semibold text-primary mb-2">Customer</h2>
+              <p className="text-secondary">{receipt.customerName}</p>
             </div>
 
             {/* Items Table */}
             <div className="mb-8">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-gray-300">
+                  <tr className="border-b-2 border-color">
                     <th className="text-left py-2 font-semibold">Item</th>
                     <th className="text-center py-2 font-semibold">Qty</th>
                     <th className="text-right py-2 font-semibold">Price</th>
@@ -166,7 +179,7 @@ export default function ReceiptView() {
                 </thead>
                 <tbody>
                   {receipt.items.map((item, index) => (
-                    <tr key={index} className="border-b border-gray-200">
+                    <tr key={index} className="border-b border-color">
                       <td className="py-2">{item.description}</td>
                       <td className="text-center py-2">{item.quantity}</td>
                       <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
@@ -178,7 +191,7 @@ export default function ReceiptView() {
             </div>
 
             {/* Summary */}
-            <div className="border-t-2 border-gray-300 pt-4">
+            <div className="border-t-2 border-color pt-4">
               <div className="flex justify-between mb-2">
                 <span className="font-medium">Subtotal:</span>
                 <span>₦{receipt.subtotal.toLocaleString()}</span>
@@ -189,20 +202,20 @@ export default function ReceiptView() {
                   <span>₦{receipt.vat.toLocaleString()}</span>
                 </div>
               )}
-              <div className="flex justify-between text-xl font-bold border-t border-gray-300 pt-2">
+              <div className="flex justify-between text-xl font-bold border-t border-color pt-2">
                 <span>Total:</span>
                 <span>₦{receipt.total.toLocaleString()}</span>
               </div>
-              <div className="mt-2 text-sm text-gray-600">
+              <div className="mt-2 text-sm text-secondary">
                 <span>Payment Method: {receipt.paymentMethod}</span>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="text-center mt-8 text-gray-600">
+            <div className="text-center mt-8 text-secondary">
               <p className="mb-2">Thank you for your business!</p>
               <p className="text-sm">This receipt was generated electronically and is valid without signature.</p>
-              <p className="text-xs mt-4 text-gray-400">
+              <p className="text-xs mt-4 text-secondary">
                 View online: {window.location.href}
               </p>
             </div>

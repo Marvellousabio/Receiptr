@@ -4,12 +4,13 @@ import dbConnect from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
 
-    const receipt = await Receipt.findOne({ receiptNumber: params.id }).populate('userId', 'businessName logoUrl vatRate');
+    const { id } = await params;
+    const receipt = await Receipt.findOne({ receiptNumber: id }).populate('userId', 'businessName address phone logoUrl vatRate');
 
     if (!receipt) {
       return NextResponse.json({ error: 'Receipt not found' }, { status: 404 });

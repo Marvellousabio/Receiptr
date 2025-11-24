@@ -7,12 +7,12 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
 
-    const { name, email, password } = await request.json();
+    const { name, email, password, businessName, address, phone, website, logoUrl } = await request.json();
 
     // Validate input
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !businessName || !address || !phone) {
       return NextResponse.json(
-        { error: 'Name, email, and password are required' },
+        { error: 'Name, email, password, business name, address, and phone are required' },
         { status: 400 }
       );
     }
@@ -34,6 +34,11 @@ export async function POST(request: NextRequest) {
       name,
       email,
       password: hashedPassword,
+      businessName,
+      address,
+      phone,
+      website: website || '',
+      logoUrl: logoUrl || '',
     });
 
     // Return user without password

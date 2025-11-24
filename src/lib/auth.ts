@@ -7,31 +7,40 @@ import User from './models/User';
 import dbConnect from './db';
 
 declare module 'next-auth' {
-  interface User {
-    businessName?: string;
-    logoUrl?: string;
-    vatRate?: number;
-  }
-  interface Session {
-    user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      businessName?: string;
-      logoUrl?: string;
-      vatRate?: number;
-    };
-  }
-}
+   interface User {
+     businessName?: string;
+     address?: string;
+     phone?: string;
+     website?: string;
+     logoUrl?: string;
+     vatRate?: number;
+   }
+   interface Session {
+     user: {
+       id: string;
+       name?: string | null;
+       email?: string | null;
+       image?: string | null;
+       businessName?: string;
+       address?: string;
+       phone?: string;
+       website?: string;
+       logoUrl?: string;
+       vatRate?: number;
+     };
+   }
+ }
 
 declare module 'next-auth/jwt' {
-  interface JWT {
-    businessName?: string;
-    logoUrl?: string;
-    vatRate?: number;
-  }
-}
+   interface JWT {
+     businessName?: string;
+     address?: string;
+     phone?: string;
+     website?: string;
+     logoUrl?: string;
+     vatRate?: number;
+   }
+ }
 
 export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -66,6 +75,9 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           businessName: user.businessName,
+          address: user.address,
+          phone: user.phone,
+          website: user.website,
           logoUrl: user.logoUrl,
           vatRate: user.vatRate,
         };
@@ -79,6 +91,9 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.businessName = user.businessName;
+        token.address = user.address;
+        token.phone = user.phone;
+        token.website = user.website;
         token.logoUrl = user.logoUrl;
         token.vatRate = user.vatRate;
       }
@@ -88,6 +103,9 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.sub!;
         session.user.businessName = token.businessName;
+        session.user.address = token.address;
+        session.user.phone = token.phone;
+        session.user.website = token.website;
         session.user.logoUrl = token.logoUrl;
         session.user.vatRate = token.vatRate;
       }

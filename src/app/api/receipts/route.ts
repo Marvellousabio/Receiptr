@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const date = searchParams.get('date');
 
-    let query: any = { userId: session.user.id };
+    const query: Record<string, any> = { userId: session.user.id };
 
     if (search) {
       query.$or = [

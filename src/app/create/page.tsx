@@ -101,10 +101,10 @@ export default function CreateReceipt() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-primary">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
         </div>
       </div>
     );
@@ -118,13 +118,13 @@ export default function CreateReceipt() {
   const total = calculateTotal();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-primary">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Create New Receipt</h1>
-          <p className="text-gray-600 mt-1">Generate a professional receipt for your customer</p>
+          <h1 className="text-3xl font-bold text-primary">Create New Receipt</h1>
+          <p className="text-secondary mt-1">Generate a professional receipt for your customer</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -135,17 +135,17 @@ export default function CreateReceipt() {
           )}
 
           {/* Customer Information */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h2>
+          <div className="bg-secondary p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium text-primary mb-4">Customer Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="customerName" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="customerName" className="block text-sm font-medium text-secondary mb-1">
                   Customer Name *
                 </label>
                 <input
                   type="text"
                   id="customerName"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Enter customer name"
@@ -153,12 +153,12 @@ export default function CreateReceipt() {
                 />
               </div>
               <div>
-                <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="paymentMethod" className="block text-sm font-medium text-secondary mb-1">
                   Payment Method
                 </label>
                 <select
                   id="paymentMethod"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 >
@@ -172,13 +172,13 @@ export default function CreateReceipt() {
           </div>
 
           {/* Items */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="bg-secondary p-6 rounded-lg shadow-sm">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-medium text-gray-900">Items</h2>
+              <h2 className="text-lg font-medium text-primary">Items</h2>
               <button
                 type="button"
                 onClick={addItem}
-                className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
+                className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-primary text-primary hover:bg-secondary focus:ring-2 focus:ring-accent focus:ring-offset-2 text-sm"
               >
                 Add Item
               </button>
@@ -188,12 +188,12 @@ export default function CreateReceipt() {
               {items.map((item, index) => (
                 <div key={index} className="flex flex-col md:flex-row gap-4 items-end">
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-secondary mb-1">
                       Description *
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                       value={item.description}
                       onChange={(e) => updateItem(index, 'description', e.target.value)}
                       placeholder="Item description"
@@ -201,28 +201,28 @@ export default function CreateReceipt() {
                     />
                   </div>
                   <div className="w-full md:w-24">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-secondary mb-1">
                       Qty *
                     </label>
                     <input
                       type="number"
                       min="1"
                       step="1"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
                       required
                     />
                   </div>
                   <div className="w-full md:w-32">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-secondary mb-1">
                       Price (₦) *
                     </label>
                     <input
                       type="number"
                       min="0"
                       step="0.01"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                       value={item.price}
                       onChange={(e) => updateItem(index, 'price', parseFloat(e.target.value) || 0)}
                       placeholder="0.00"
@@ -230,10 +230,10 @@ export default function CreateReceipt() {
                     />
                   </div>
                   <div className="w-full md:w-24">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-secondary mb-1">
                       Total
                     </label>
-                    <div className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50">
+                    <div className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-primary">
                       ₦{(item.quantity * item.price).toLocaleString()}
                     </div>
                   </div>
@@ -241,7 +241,7 @@ export default function CreateReceipt() {
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
-                      className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mb-0"
+                      className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-primary text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-accent focus:ring-offset-2 mb-0"
                     >
                       Remove
                     </button>
@@ -252,15 +252,15 @@ export default function CreateReceipt() {
           </div>
 
           {/* Summary */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Summary</h2>
+          <div className="bg-secondary p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium text-primary mb-4">Summary</h2>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-secondary">Subtotal:</span>
                 <span className="font-medium">₦{subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">VAT (0%):</span>
+                <span className="text-secondary">VAT (0%):</span>
                 <span className="font-medium">₦0.00</span>
               </div>
               <div className="border-t pt-2 flex justify-between text-lg font-bold">
@@ -275,14 +275,14 @@ export default function CreateReceipt() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-primary text-primary hover:bg-secondary focus:ring-2 focus:ring-accent focus:ring-offset-2"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-accent text-primary hover:bg-accent focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating Receipt...' : 'Create Receipt'}
             </button>

@@ -16,15 +16,31 @@ const UserSchema = new mongoose.Schema({
   },
   businessName: {
     type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  website: {
+    type: String,
     default: '',
   },
   logoUrl: {
     type: String,
     default: '',
   },
-  vatRate: {
-    type: Number,
-    default: 0,
+  businesses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Business',
+  }],
+  currentBusiness: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Business',
   },
   createdAt: {
     type: Date,
