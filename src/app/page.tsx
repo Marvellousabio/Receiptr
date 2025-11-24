@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; 
 import Navbar from '@/components/Navbar';
 
 const containerVariants = {
@@ -19,7 +19,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.6, ease: [0.42, 0, 0.58, 1] },
   },
 };
 
@@ -35,7 +35,7 @@ export default function Home() {
             className="text-center"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}>
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               Create Professional
               <span className="text-blue-600 block">Digital Receipts</span>
@@ -263,7 +263,7 @@ export default function Home() {
       </motion.div>
 
       {/* Newsletter Signup Section */}
-      <div className="relative py-24 " style={{ backgroundImage: 'url("/newsletter.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="relative py-24 newsletter-bg">
       <div className='absolute inset-0 bg-blue-900/30 backdrop-blur-sm'></div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center ">
           <h2 className="text-3xl font-bold text-white mb-4">
@@ -276,7 +276,9 @@ export default function Home() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4  border-white py-3 rounded-lg border focus:ring-2 focus:ring-white focus:ring-opacity-50"
+              className="flex-1 px-4 border-white py-3 rounded-lg border focus:ring-2 focus:ring-white focus:ring-opacity-50"
+              // ADDED: For improved accessibility
+              aria-label="Enter your email address for newsletter subscription"
             />
             <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
               Subscribe
@@ -335,17 +337,17 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Connect</h4>
               <div className="flex space-x-4">
-                <a href="https://x.com/MarvellousAbio5" className="text-gray-400 hover:text-white">
+                <a href="https://x.com/MarvellousAbio5" className="text-gray-400 hover:text-white" title="Follow on X">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
                   </svg>
                 </a>
-                <a href="https://www.instagram.com/marvellous_ogunleke" className="text-gray-400 hover:text-white">
+                <a href="https://www.instagram.com/marvellous_ogunleke" className="text-gray-400 hover:text-white" title="Follow on Instagram">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M19.35,5.65A1.15,1.15 0 0,1 20.5,6.8A1.15,1.15 0 0,1 19.35,7.95A1.15,1.15 0 0,1 18.2,6.8A1.15,1.15 0 0,1 19.35,5.65Z"/>
-                     </svg>
+                      </svg>
                 </a>
-                <a href="https://www.linkedin.com/in/marvellous-ogunleke2025" className="text-gray-400 hover:text-white">
+                <a href="https://www.linkedin.com/in/marvellous-ogunleke2025" className="text-gray-400 hover:text-white" title="Connect on LinkedIn">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                   </svg>
@@ -362,4 +364,3 @@ export default function Home() {
     </div>
   );
 }
-

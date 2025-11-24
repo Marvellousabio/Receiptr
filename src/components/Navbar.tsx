@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
 
   return (
     <nav className="bg-primary shadow-sm border-b border-color">
@@ -37,9 +38,10 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/general-settings"
-                  className="text-secondary hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-secondary hover:text-primary px-3 py-2 rounded-md text-sm font-medium flex items-center"
                 >
-                  Settings
+                  <Cog6ToothIcon className="h-5 w-5" />
+                  <span className="hidden sm:inline ml-1">Settings</span>
                 </Link>
               </>
             ) : (
