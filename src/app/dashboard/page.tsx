@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
-import { ChartBarIcon, DocumentTextIcon, CogIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, DocumentTextIcon, CogIcon, Bars3Icon } from '@heroicons/react/24/outline';
 
 interface Receipt {
   _id: string;
@@ -25,6 +25,7 @@ export default function Dashboard() {
    const [dateFilter, setDateFilter] = useState('');
    const [activeTab, setActiveTab] = useState('overview');
    const [sidebarExpanded, setSidebarExpanded] = useState(false);
+   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
    // Settings state
    const [businessName, setBusinessName] = useState('');
    const [address, setAddress] = useState('');
@@ -150,9 +151,9 @@ export default function Dashboard() {
       <div className="flex">
         {/* Sidebar */}
         <div
-          className={`bg-primary shadow-sm min-h-screen transition-all duration-300 ${
-            sidebarExpanded ? 'w-64' : 'w-16'
-          }`}
+          className={`bg-primary shadow-sm transition-all duration-300 fixed inset-y-0 left-0 z-50 md:relative md:min-h-screen ${
+            mobileSidebarOpen ? 'w-64' : 'w-0 md:w-16'
+          } ${sidebarExpanded ? 'md:w-64' : 'md:w-16'}`}
           onMouseEnter={() => setSidebarExpanded(true)}
           onMouseLeave={() => setSidebarExpanded(false)}
         >
@@ -627,3 +628,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
