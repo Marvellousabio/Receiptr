@@ -157,43 +157,52 @@ export default function Dashboard() {
           onMouseEnter={() => setSidebarExpanded(true)}
           onMouseLeave={() => setSidebarExpanded(false)}
         >
-          <div className="p-4">
-            {sidebarExpanded && (
+          <div className={`p-4 ${mobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
+            {(sidebarExpanded || mobileSidebarOpen) && (
               <h2 className="text-lg font-semibold text-primary mb-4">Dashboard</h2>
             )}
             <nav className="space-y-2">
               <button
-                onClick={() => setActiveTab('overview')}
+                onClick={() => {
+                  setActiveTab('overview');
+                  setMobileSidebarOpen(false);
+                }}
                 className={`w-full flex items-center px-3 py-2 rounded-md text-sm font-medium ${
                   activeTab === 'overview'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${sidebarExpanded ? 'justify-start' : 'justify-center'}`}
+                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <ChartBarIcon className="w-5 h-5" />
-                {sidebarExpanded && <span className="ml-2">Overview</span>}
+                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Overview</span>}
               </button>
               <button
-                onClick={() => setActiveTab('receipts')}
+                onClick={() => {
+                  setActiveTab('receipts');
+                  setMobileSidebarOpen(false);
+                }}
                 className={`w-full flex items-center px-3 py-2 rounded-md text-sm font-medium ${
                   activeTab === 'receipts'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${sidebarExpanded ? 'justify-start' : 'justify-center'}`}
+                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <DocumentTextIcon className="w-5 h-5" />
-                {sidebarExpanded && <span className="ml-2">Receipts</span>}
+                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Receipts</span>}
               </button>
               <button
-                onClick={() => setActiveTab('settings')}
+                onClick={() => {
+                  setActiveTab('settings');
+                  setMobileSidebarOpen(false);
+                }}
                 className={`w-full flex items-center px-3 py-2 rounded-md text-sm font-medium ${
                   activeTab === 'settings'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${sidebarExpanded ? 'justify-start' : 'justify-center'}`}
+                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <CogIcon className="w-5 h-5" />
-                {sidebarExpanded && <span className="ml-2">Business Settings</span>}
+                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Business Settings</span>}
               </button>
             </nav>
           </div>
