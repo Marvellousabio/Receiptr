@@ -350,7 +350,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <ChartBarIcon className="w-5 h-5" />
+                <ChartBarIcon className="w-6 h-6" />
                 {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Overview</span>}
               </button>
               <button
@@ -364,7 +364,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <DocumentTextIcon className="w-5 h-5" />
+                <DocumentTextIcon className="w-6 h-6" />
                 {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Receipts</span>}
               </button>
               <button
@@ -378,7 +378,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <DocumentTextIcon className="w-5 h-5" />
+                <DocumentTextIcon className="w-6 h-6" />
                 {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Templates</span>}
               </button>
               <button
@@ -392,7 +392,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <CogIcon className="w-5 h-5" />
+                <CogIcon className="w-6 h-6" />
                 {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Business Settings</span>}
               </button>
             </nav>
