@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://receiptr-plum.vercel.app/sitemap.xml
