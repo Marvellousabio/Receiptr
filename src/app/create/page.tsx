@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 interface Item {
   description: string;
   quantity: number;
