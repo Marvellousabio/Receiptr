@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     authors: [{ name: "Marvellous Ogunleke" }],
   openGraph: {
     title: "Receiptr - Digital Receipt Generator",
-    description: "Create and share professional digital receipts instantly',
+    description: "Create and share professional digital receipts instantly",
     type: "website",
     images: [
       {

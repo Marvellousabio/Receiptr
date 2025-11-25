@@ -357,7 +357,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Receiptr. Developed by <a href="https://marvellous-ogunleke.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:underline">Marvellous Ogunleke</a>. All rights reserved.</p>
+            <p>&copy; 2025 Receiptr. Developed by <a href="https://marvellous-ogunleke.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-pointer">Marvellous Ogunleke</a>. All rights reserved.</p>
           </div>
         </div>
       </footer>
