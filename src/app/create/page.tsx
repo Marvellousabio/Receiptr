@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
@@ -14,7 +14,7 @@ interface Item {
   price: number;
 }
 
-export default function CreateReceipt() {
+function CreateReceiptContent() {
    const { data: session, status } = useSession();
    const router = useRouter();
    const searchParams = useSearchParams();
@@ -183,6 +183,21 @@ export default function CreateReceipt() {
           </div>
         </div>
       </div>
+    );
+  }
+  
+  export default function CreateReceipt() {
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-primary">
+          <Navbar />
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+          </div>
+        </div>
+      }>
+        <CreateReceiptContent />
+      </Suspense>
     );
   }
 
