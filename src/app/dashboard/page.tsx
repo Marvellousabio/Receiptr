@@ -348,10 +348,10 @@ export default function Dashboard() {
                   activeTab === 'overview'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
+                } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <ChartBarIcon className="w-6 h-6" />
-                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Overview</span>}
+                {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Overview</span>}
               </button>
               <button
                 onClick={() => {
@@ -362,10 +362,10 @@ export default function Dashboard() {
                   activeTab === 'receipts'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
+                } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <DocumentTextIcon className="w-6 h-6" />
-                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Receipts</span>}
+                {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Receipts</span>}
               </button>
               <button
                 onClick={() => {
@@ -376,10 +376,10 @@ export default function Dashboard() {
                   activeTab === 'templates'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
+                } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <DocumentTextIcon className="w-6 h-6" />
-                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Templates</span>}
+                {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Templates</span>}
               </button>
               <button
                 onClick={() => {
@@ -390,10 +390,10 @@ export default function Dashboard() {
                   activeTab === 'settings'
                     ? 'bg-accent text-white'
                     : 'text-secondary hover:bg-secondary'
-                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
+                } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
                 <CogIcon className="w-6 h-6" />
-                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Business Settings</span>}
+                {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Business Settings</span>}
               </button>
             </nav>
           </div>
