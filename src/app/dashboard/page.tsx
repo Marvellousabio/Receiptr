@@ -813,30 +813,36 @@ export default function Dashboard() {
                         <h3 className="text-md font-medium text-primary mb-3">Color Scheme</h3>
                         <div className="space-y-3">
                           <div>
-                            <label className="block text-sm font-medium text-secondary mb-1">Primary Color</label>
+                            <label htmlFor="primaryColor" className="block text-sm font-medium text-secondary mb-1">Primary Color</label>
                             <input
+                              id="primaryColor"
                               type="color"
                               value={customColors.primary}
                               onChange={(e) => setCustomColors({...customColors, primary: e.target.value})}
                               className="w-full h-10 rounded border border-color"
+                              title="Primary Color"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-secondary mb-1">Secondary Color</label>
+                            <label htmlFor="secondaryColor" className="block text-sm font-medium text-secondary mb-1">Secondary Color</label>
                             <input
+                              id="secondaryColor"
                               type="color"
                               value={customColors.secondary}
                               onChange={(e) => setCustomColors({...customColors, secondary: e.target.value})}
                               className="w-full h-10 rounded border border-color"
+                              title="Secondary Color"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-secondary mb-1">Accent Color</label>
+                            <label htmlFor="accentColor" className="block text-sm font-medium text-secondary mb-1">Accent Color</label>
                             <input
+                              id="accentColor"
                               type="color"
                               value={customColors.accent}
                               onChange={(e) => setCustomColors({...customColors, accent: e.target.value})}
                               className="w-full h-10 rounded border border-color"
+                              title="Accent Color"
                             />
                           </div>
                         </div>
@@ -845,11 +851,13 @@ export default function Dashboard() {
                       <div>
                         <h3 className="text-md font-medium text-primary mb-3">Typography</h3>
                         <div>
-                          <label className="block text-sm font-medium text-secondary mb-1">Font Family</label>
+                          <label htmlFor="fontFamily" className="block text-sm font-medium text-secondary mb-1">Font Family</label>
                           <select
+                            id="fontFamily"
                             value={customFont}
                             onChange={(e) => setCustomFont(e.target.value)}
                             className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                            title="Font Family"
                           >
                             {fonts.map((font) => (
                               <option key={font.id} value={font.id} style={{ fontFamily: font.family }}>

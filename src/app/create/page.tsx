@@ -262,10 +262,11 @@ export default function CreateReceipt() {
               {items.map((item, index) => (
                 <div key={index} className="flex flex-col md:flex-row gap-4 items-end">
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-secondary mb-1">
+                    <label htmlFor={`description-${index}`} className="block text-sm font-medium text-secondary mb-1">
                       Description *
                     </label>
                     <input
+                      id={`description-${index}`}
                       type="text"
                       className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                       value={item.description}
@@ -275,24 +276,27 @@ export default function CreateReceipt() {
                     />
                   </div>
                   <div className="w-full md:w-24">
-                    <label className="block text-sm font-medium text-secondary mb-1">
+                    <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-secondary mb-1">
                       Qty *
                     </label>
                     <input
+                      id={`quantity-${index}`}
                       type="number"
                       min="1"
                       step="1"
                       className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                      placeholder="1"
                       required
                     />
                   </div>
                   <div className="w-full md:w-32">
-                    <label className="block text-sm font-medium text-secondary mb-1">
+                    <label htmlFor={`price-${index}`} className="block text-sm font-medium text-secondary mb-1">
                       Price (₦) *
                     </label>
                     <input
+                      id={`price-${index}`}
                       type="number"
                       min="0"
                       step="0.01"
@@ -302,7 +306,7 @@ export default function CreateReceipt() {
                         const rawValue= e.target.value;
                         let newValue;
 
-                        if (rawValue==='' || rawValue==='.'){newValue=0} 
+                        if (rawValue==='' || rawValue==='.'){newValue=0}
                         else { newValue= parseFloat(rawValue) || 0};
                         updateItem(index, 'price',newValue);}}
                       placeholder="0.00"
@@ -313,7 +317,7 @@ export default function CreateReceipt() {
                     <label className="block text-sm font-medium text-secondary mb-1">
                       Total
                     </label>
-                    <div className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-primary">
+                    <div className="w-full px-3 py-2 border border-color rounded-md bg-primary">
                       ₦{(item.quantity * item.price).toLocaleString()}
                     </div>
                   </div>
