@@ -297,8 +297,14 @@ export default function CreateReceipt() {
                       min="0"
                       step="0.01"
                       className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                      value={item.price}
-                      onChange={(e) => updateItem(index, 'price', parseFloat(e.target.value) || 0)}
+                      value={item.price===0?'':item.price}
+                      onChange={(e)=>{
+                        const rawValue= e.target.value;
+                        let newValue;
+
+                        if (rawValue==='' || rawValue==='.'){newValue=0} 
+                        else { newValue= parseFloat(rawValue) || 0};
+                        updateItem(index, 'price',newValue);}}
                       placeholder="0.00"
                       required
                     />
@@ -362,28 +368,11 @@ export default function CreateReceipt() {
             </button>
           </div>
 
-          {/* Submit */}
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-primary text-primary hover:bg-secondary focus:ring-2 focus:ring-accent focus:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-accent text-primary hover:bg-accent focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Creating Receipt...' : 'Create Receipt'}
-            </button>
-          </div>
         </form>
 
         {/* Generated Receipt Preview (Anonymous Mode) */}
         {generatedReceipt && (
-          <div className="mt-8 bg-secondary p-6 rounded-lg shadow-sm">
+          <div className="mt-8 bg-secondary p-6 rounded-lg shadow-sm text-black">
             <h2 className="text-lg font-medium text-primary mb-4">Receipt Preview</h2>
             <div className="bg-white p-6 rounded border">
               <div className="text-center mb-4">
