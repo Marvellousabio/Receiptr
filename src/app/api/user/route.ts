@@ -40,11 +40,11 @@ export async function PUT(request: NextRequest) {
 
     await dbConnect();
 
-    const { businessName, logoUrl, vatRate } = await request.json();
+    const { businessName, address, phone, website, logoUrl, vatRate, selectedTemplate } = await request.json();
 
     const user = await User.findByIdAndUpdate(
       session.user.id,
-      { businessName, logoUrl, vatRate },
+      { businessName, address, phone, website, logoUrl, vatRate, selectedTemplate },
       { new: true }
     ).select('-password');
 

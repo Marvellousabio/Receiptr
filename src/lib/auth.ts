@@ -14,6 +14,7 @@ declare module 'next-auth' {
      website?: string;
      logoUrl?: string;
      vatRate?: number;
+     selectedTemplate?: string;
    }
    interface Session {
      user: {
@@ -27,6 +28,7 @@ declare module 'next-auth' {
        website?: string;
        logoUrl?: string;
        vatRate?: number;
+       selectedTemplate?: string;
      };
    }
  }
@@ -39,6 +41,7 @@ declare module 'next-auth/jwt' {
      website?: string;
      logoUrl?: string;
      vatRate?: number;
+     selectedTemplate?: string;
    }
  }
 
@@ -80,6 +83,7 @@ export const authOptions: NextAuthOptions = {
           website: user.website,
           logoUrl: user.logoUrl,
           vatRate: user.vatRate,
+          selectedTemplate: user.selectedTemplate,
         };
       },
     }),
@@ -96,6 +100,7 @@ export const authOptions: NextAuthOptions = {
         token.website = user.website;
         token.logoUrl = user.logoUrl;
         token.vatRate = user.vatRate;
+        token.selectedTemplate = user.selectedTemplate;
       }
       return token;
     },
@@ -108,6 +113,7 @@ export const authOptions: NextAuthOptions = {
         session.user.website = token.website;
         session.user.logoUrl = token.logoUrl;
         session.user.vatRate = token.vatRate;
+        session.user.selectedTemplate = token.selectedTemplate;
       }
       return session;
     },

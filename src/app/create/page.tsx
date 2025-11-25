@@ -1,9 +1,10 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 
 interface Item {
   description: string;
@@ -12,19 +13,31 @@ interface Item {
 }
 
 export default function CreateReceipt() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [customerName, setCustomerName] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('Cash');
-  const [items, setItems] = useState<Item[]>([{ description: '', quantity: 1, price: 0 }]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+   const { data: session, status } = useSession();
+   const router = useRouter();
+   const searchParams = useSearchParams();
+   const isTryMode = searchParams.get('mode') === 'try';
+   const [customerName, setCustomerName] = useState('');
+   const [paymentMethod, setPaymentMethod] = useState('Cash');
+   const [items, setItems] = useState<Item[]>([{ description: '', quantity: 1, price: 0 }]);
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState('');
+   const [attemptCount, setAttemptCount] = useState(0);
+   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+   const [generatedReceipt, setGeneratedReceipt] = useState<{receiptNumber: string; customerName: string; items: Item[]; total: number; paymentMethod: string; createdAt: string} | null>(null);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (isTryMode) {
+      // Anonymous mode - check attempt count
+      const attempts = parseInt(localStorage.getItem('receiptAttempts') || '0');
+      setAttemptCount(attempts);
+      if (attempts >= 2) {
+        setShowSignupPrompt(true);
+      }
+    } else if (status === 'unauthenticated') {
       router.push('/login');
     }
-  }, [status, router]);
+  }, [status, router, isTryMode]);
 
   const addItem = () => {
     setItems([...items, { description: '', quantity: 1, price: 0 }]);
@@ -70,28 +83,57 @@ export default function CreateReceipt() {
       return;
     }
 
+    if (isTryMode && attemptCount >= 2) {
+      setShowSignupPrompt(true);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/receipts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      if (isTryMode) {
+        // Anonymous mode - generate receipt locally
+        const receiptNumber = `TRY-${Date.now()}`;
+        const total = calculateTotal();
+        const receipt = {
+          receiptNumber,
           customerName,
           items,
           paymentMethod,
-        }),
-      });
+          total,
+          createdAt: new Date().toISOString(),
+        };
 
-      const data = await response.json();
+        // Increment attempt count
+        const newAttempts = attemptCount + 1;
+        localStorage.setItem('receiptAttempts', newAttempts.toString());
+        setAttemptCount(newAttempts);
 
-      if (!response.ok) {
-        setError(data.error || 'Failed to create receipt');
-        return;
+        setGeneratedReceipt(receipt);
+        setShowSignupPrompt(true);
+      } else {
+        // Authenticated mode - save to database
+        const response = await fetch('/api/receipts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            customerName,
+            items,
+            paymentMethod,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(data.error || 'Failed to create receipt');
+          return;
+        }
+
+        // Redirect to the receipt view
+        router.push(`/receipts/${data.receipt.receiptNumber}`);
       }
-
-      // Redirect to the receipt view
-      router.push(`/receipts/${data.receipt.receiptNumber}`);
     } catch (error) {
       setError('An error occurred. Please try again.');
     } finally {
@@ -99,7 +141,7 @@ export default function CreateReceipt() {
     }
   };
 
-  if (status === 'loading') {
+  if (status === 'loading' && !isTryMode) {
     return (
       <div className="min-h-screen bg-primary">
         <Navbar />
@@ -110,8 +152,36 @@ export default function CreateReceipt() {
     );
   }
 
-  if (!session) {
+  if (!session && !isTryMode) {
     return null;
+  }
+
+  if (showSignupPrompt && isTryMode && attemptCount >= 2) {
+    return (
+      <div className="min-h-screen bg-primary">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-primary mb-4">You've reached the free trial limit</h2>
+            <p className="text-secondary mb-6">Create an account to generate unlimited receipts and save them permanently.</p>
+            <div className="space-x-4">
+              <Link
+                href="/register"
+                className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
+              >
+                Sign Up Now
+              </Link>
+              <Link
+                href="/login"
+                className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const subtotal = calculateSubtotal();
@@ -123,8 +193,12 @@ export default function CreateReceipt() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary">Create New Receipt</h1>
-          <p className="text-secondary mt-1">Generate a professional receipt for your customer</p>
+          <h1 className="text-3xl font-bold text-primary">
+            {isTryMode ? 'Try Receiptr Free' : 'Create New Receipt'}
+          </h1>
+          <p className="text-secondary mt-1">
+            {isTryMode ? `Generate a receipt (attempt ${attemptCount + 1} of 2)` : 'Generate a professional receipt for your customer'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -287,7 +361,87 @@ export default function CreateReceipt() {
               {loading ? 'Creating Receipt...' : 'Create Receipt'}
             </button>
           </div>
+
+          {/* Submit */}
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-primary text-primary hover:bg-secondary focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-accent text-primary hover:bg-accent focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating Receipt...' : 'Create Receipt'}
+            </button>
+          </div>
         </form>
+
+        {/* Generated Receipt Preview (Anonymous Mode) */}
+        {generatedReceipt && (
+          <div className="mt-8 bg-secondary p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium text-primary mb-4">Receipt Preview</h2>
+            <div className="bg-white p-6 rounded border">
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-bold">RECEIPT</h3>
+                <p className="text-sm text-gray-600">#{generatedReceipt.receiptNumber}</p>
+              </div>
+              <div className="mb-4">
+                <p><strong>Customer:</strong> {generatedReceipt.customerName}</p>
+                <p><strong>Payment Method:</strong> {generatedReceipt.paymentMethod}</p>
+                <p><strong>Date:</strong> {new Date(generatedReceipt.createdAt).toLocaleDateString()}</p>
+              </div>
+              <table className="w-full mb-4">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left">Item</th>
+                    <th className="text-center">Qty</th>
+                    <th className="text-right">Price</th>
+                    <th className="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {generatedReceipt.items.map((item: Item, index: number) => (
+                    <tr key={index}>
+                      <td>{item.description}</td>
+                      <td className="text-center">{item.quantity}</td>
+                      <td className="text-right">₦{item.price.toLocaleString()}</td>
+                      <td className="text-right">₦{(item.quantity * item.price).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="text-right font-bold">
+                Total: ₦{generatedReceipt.total.toLocaleString()}
+              </div>
+            </div>
+            <div className="mt-6 text-center">
+              <p className="text-secondary mb-4">Create an account to save this receipt and generate unlimited receipts.</p>
+              <div className="space-x-4">
+                <Link
+                  href="/register"
+                  className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
+                >
+                  Sign Up to Save
+                </Link>
+                <button
+                  onClick={() => {
+                    setGeneratedReceipt(null);
+                    setCustomerName('');
+                    setItems([{ description: '', quantity: 1, price: 0 }]);
+                  }}
+                  className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
+                >
+                  Create Another
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -34,6 +34,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  selectedTemplate: {
+    type: String,
+    default: 'classic',
+  },
   businesses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Business',

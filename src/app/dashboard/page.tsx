@@ -36,6 +36,34 @@ export default function Dashboard() {
    const [saving, setSaving] = useState(false);
    const [error, setError] = useState('');
    const [success, setSuccess] = useState('');
+   // Templates state
+   const [selectedTemplate, setSelectedTemplate] = useState('classic');
+   const [templates] = useState([
+     {
+       id: 'classic',
+       name: 'Classic',
+       description: 'Clean and professional design',
+       preview: 'Simple layout with standard styling'
+     },
+     {
+       id: 'modern',
+       name: 'Modern',
+       description: 'Contemporary design with bold colors',
+       preview: 'Modern layout with accent colors'
+     },
+     {
+       id: 'minimal',
+       name: 'Minimal',
+       description: 'Simple and elegant',
+       preview: 'Minimalist design with subtle styling'
+     },
+     {
+       id: 'corporate',
+       name: 'Corporate',
+       description: 'Formal business template',
+       preview: 'Professional corporate styling'
+     }
+   ]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -57,6 +85,7 @@ export default function Dashboard() {
       setWebsite(session.user.website || '');
       setLogoUrl(session.user.logoUrl || '');
       setVatRate(session.user.vatRate || 0);
+      setSelectedTemplate(session.user.selectedTemplate || 'classic');
     }
   }, [session]);
 
@@ -79,6 +108,42 @@ export default function Dashboard() {
       setReceipts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTemplateSubmit = async () => {
+    setSaving(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch('/api/user', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedTemplate,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to update template');
+        return;
+      }
+
+      // Update session
+      await update({
+        selectedTemplate,
+      });
+
+      setSuccess('Template updated successfully!');
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -200,6 +265,20 @@ export default function Dashboard() {
               </button>
               <button
                 onClick={() => {
+                  setActiveTab('templates');
+                  setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'templates'
+                    ? 'bg-accent text-white'
+                    : 'text-secondary hover:bg-secondary'
+                } ${(sidebarExpanded || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
+              >
+                <DocumentTextIcon className="w-5 h-5" />
+                {(sidebarExpanded || mobileSidebarOpen) && <span className="ml-2">Templates</span>}
+              </button>
+              <button
+                onClick={() => {
                   setActiveTab('settings');
                   setMobileSidebarOpen(false);
                 }}
@@ -223,11 +302,13 @@ export default function Dashboard() {
               <h1 className="text-2xl sm:text-3xl font-bold text-primary">
                 {activeTab === 'overview' && 'Overview'}
                 {activeTab === 'receipts' && 'Receipts'}
+                {activeTab === 'templates' && 'Templates'}
                 {activeTab === 'settings' && 'Business Settings'}
               </h1>
               <p className="text-secondary mt-1 text-sm sm:text-base">
                 {activeTab === 'overview' && 'Manage your receipts and business profile'}
                 {activeTab === 'receipts' && 'View and manage your receipts'}
+                {activeTab === 'templates' && 'Choose and customize receipt templates'}
                 {activeTab === 'settings' && 'Update your business information'}
               </p>
             </div>
@@ -569,6 +650,57 @@ export default function Dashboard() {
                 )}
               </div>
             </>
+          )}
+
+          {activeTab === 'templates' && (
+            <div className="space-y-6">
+              <div className="bg-primary p-6 rounded-lg shadow-sm">
+                <h2 className="text-lg font-medium text-primary mb-4">Choose Receipt Template</h2>
+                <p className="text-secondary mb-6">Select a template for your receipts. This will be applied to all new receipts.</p>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {templates.map((template) => (
+                    <div
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template.id)}
+                      className={`cursor-pointer border-2 rounded-lg p-4 transition-colors ${
+                        selectedTemplate === template.id
+                          ? 'border-accent bg-accent bg-opacity-10'
+                          : 'border-color hover:border-accent'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="w-full h-20 bg-secondary rounded mb-3 flex items-center justify-center">
+                          <span className="text-2xl font-bold text-primary">{template.name.charAt(0)}</span>
+                        </div>
+                        <h3 className="font-semibold text-primary">{template.name}</h3>
+                        <p className="text-sm text-secondary mt-1">{template.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex justify-end">
+                  <button
+                    onClick={handleTemplateSubmit}
+                    disabled={saving}
+                    className="px-6 py-3 rounded-lg font-medium transition-colors duration-200 bg-accent text-white focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {saving ? 'Saving...' : 'Save Template'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-primary p-6 rounded-lg shadow-sm">
+                <h2 className="text-lg font-medium text-primary mb-4">Custom Templates</h2>
+                <p className="text-secondary mb-4">Create your own custom receipt template with personalized styling.</p>
+                <button
+                  className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-primary text-primary hover:bg-secondary focus:ring-2 focus:ring-accent focus:ring-offset-2 border border-color"
+                >
+                  Create Custom Template
+                </button>
+              </div>
+            </div>
           )}
 
           {activeTab === 'settings' && (
