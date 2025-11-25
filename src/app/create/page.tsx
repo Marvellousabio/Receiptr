@@ -372,40 +372,67 @@ export default function CreateReceipt() {
 
         {/* Generated Receipt Preview (Anonymous Mode) */}
         {generatedReceipt && (
-          <div className="mt-8 bg-secondary p-6 rounded-lg shadow-sm text-black">
+          <div className="mt-8">
             <h2 className="text-lg font-medium text-primary mb-4">Receipt Preview</h2>
-            <div className="bg-white p-6 rounded border">
-              <div className="text-center mb-4">
-                <h3 className="text-xl font-bold">RECEIPT</h3>
-                <p className="text-sm text-gray-600">#{generatedReceipt.receiptNumber}</p>
-              </div>
-              <div className="mb-4">
-                <p><strong>Customer:</strong> {generatedReceipt.customerName}</p>
-                <p><strong>Payment Method:</strong> {generatedReceipt.paymentMethod}</p>
-                <p><strong>Date:</strong> {new Date(generatedReceipt.createdAt).toLocaleDateString()}</p>
-              </div>
-              <table className="w-full mb-4">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left">Item</th>
-                    <th className="text-center">Qty</th>
-                    <th className="text-right">Price</th>
-                    <th className="text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {generatedReceipt.items.map((item: Item, index: number) => (
-                    <tr key={index}>
-                      <td>{item.description}</td>
-                      <td className="text-center">{item.quantity}</td>
-                      <td className="text-right">₦{item.price.toLocaleString()}</td>
-                      <td className="text-right">₦{(item.quantity * item.price).toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="text-right font-bold">
-                Total: ₦{generatedReceipt.total.toLocaleString()}
+            <div className="bg-secondary shadow-lg rounded-lg overflow-hidden max-w-2xl mx-auto">
+              <div className="p-8" id="try-receipt-content">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-primary mb-2">
+                    Try Receiptr
+                  </h1>
+                  <div className="text-secondary">
+                    <p>Receipt #{generatedReceipt.receiptNumber}</p>
+                    <p>{new Date(generatedReceipt.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+
+                {/* Customer Info */}
+                <div className="mb-8">
+                  <h2 className="text-lg font-semibold text-primary mb-2">Customer</h2>
+                  <p className="text-secondary">{generatedReceipt.customerName}</p>
+                </div>
+
+                {/* Items Table */}
+                <div className="mb-8">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b-2 border-color">
+                        <th className="text-left py-2 font-semibold">Item</th>
+                        <th className="text-center py-2 font-semibold">Qty</th>
+                        <th className="text-right py-2 font-semibold">Price</th>
+                        <th className="text-right py-2 font-semibold">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {generatedReceipt.items.map((item: Item, index: number) => (
+                        <tr key={index} className="border-b border-color">
+                          <td className="py-2">{item.description}</td>
+                          <td className="text-center py-2">{item.quantity}</td>
+                          <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
+                          <td className="text-right py-2">₦{(item.quantity * item.price).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Summary */}
+                <div className="border-t-2 border-color pt-4">
+                  <div className="flex justify-between text-xl font-bold border-t border-color pt-2">
+                    <span>Total:</span>
+                    <span>₦{generatedReceipt.total.toLocaleString()}</span>
+                  </div>
+                  <div className="mt-2 text-sm text-secondary">
+                    <span>Payment Method: {generatedReceipt.paymentMethod}</span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="text-center mt-8 text-secondary">
+                  <p className="mb-2">Thank you for your business!</p>
+                  <p className="text-sm">This is a preview. Create an account to generate real receipts.</p>
+                </div>
               </div>
             </div>
             <div className="mt-6 text-center">

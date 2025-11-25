@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { PrinterIcon, PhoneIcon, EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline';
+import { PrinterIcon, PhoneIcon, EnvelopeIcon, LinkIcon, DocumentArrowDownIcon, PhotoIcon, QrCodeIcon } from '@heroicons/react/24/outline';
+import QRCode from 'qrcode';
 
 interface Receipt {
   _id: string;
@@ -28,16 +29,23 @@ interface Receipt {
 }
 
 export default function ReceiptView() {
-  const params = useParams();
-  const [receipt, setReceipt] = useState<Receipt | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+   const params = useParams();
+   const [receipt, setReceipt] = useState<Receipt | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState('');
+   const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   useEffect(() => {
     if (params.id) {
       fetchReceipt();
     }
   }, [params.id]);
+
+  useEffect(() => {
+    if (receipt) {
+      generateQRCode();
+    }
+  }, [receipt]);
 
   const fetchReceipt = async () => {
     try {
@@ -57,8 +65,82 @@ export default function ReceiptView() {
     }
   };
 
+  const generateQRCode = async () => {
+    try {
+      const url = window.location.href;
+      const qrCodeDataUrl = await QRCode.toDataURL(url, {
+        width: 128,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      setQrCodeUrl(qrCodeDataUrl);
+    } catch (error) {
+      console.error('Failed to generate QR code:', error);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadPDF = async () => {
+    const element = document.getElementById('receipt-content');
+    if (!element) return;
+
+    const html2pdf = (await import('html2pdf.js')).default;
+
+    const opt = {
+      margin: 1,
+      filename: `receipt-${receipt?.receiptNumber}.pdf`,
+      image: { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
+
+  const handleShareAsImage = async (platform: string) => {
+    const element = document.getElementById('receipt-content');
+    if (!element) return;
+
+    const html2canvas = (await import('html2canvas')).default;
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+
+      const imageDataUrl = canvas.toDataURL('image/png');
+      const text = `Receipt ${receipt?.receiptNumber} from ${receipt?.userId.businessName}`;
+
+      switch (platform) {
+        case 'facebook':
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`);
+          break;
+        case 'twitter':
+          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`);
+          break;
+        case 'linkedin':
+          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`);
+          break;
+        case 'download':
+          const link = document.createElement('a');
+          link.download = `receipt-${receipt?.receiptNumber}.png`;
+          link.href = imageDataUrl;
+          link.click();
+          break;
+      }
+    } catch (error) {
+      console.error('Failed to share as image:', error);
+      alert('Failed to generate image. Please try again.');
+    }
   };
 
   const handleShare = (platform: string) => {
@@ -111,11 +193,39 @@ export default function ReceiptView() {
             Print
           </button>
           <button
+            onClick={handleDownloadPDF}
+            className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
+          >
+            <DocumentArrowDownIcon className="w-5 h-5" />
+            Download PDF
+          </button>
+          <button
+            onClick={() => handleShareAsImage('download')}
+            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
+          >
+            <PhotoIcon className="w-5 h-5" />
+            Download Image
+          </button>
+          <button
             onClick={() => handleShare('whatsapp')}
             className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
             <PhoneIcon className="w-5 h-5" />
             WhatsApp
+          </button>
+          <button
+            onClick={() => handleShareAsImage('facebook')}
+            className="bg-blue-800 text-white hover:bg-blue-900 px-4 py-2 rounded-md font-medium flex items-center gap-2"
+          >
+            <PhotoIcon className="w-5 h-5" />
+            Share on Facebook
+          </button>
+          <button
+            onClick={() => handleShareAsImage('twitter')}
+            className="bg-sky-500 text-white hover:bg-sky-600 px-4 py-2 rounded-md font-medium flex items-center gap-2"
+          >
+            <PhotoIcon className="w-5 h-5" />
+            Share on Twitter
           </button>
           <button
             onClick={() => handleShare('email')}
@@ -215,9 +325,21 @@ export default function ReceiptView() {
             <div className="text-center mt-8 text-secondary">
               <p className="mb-2">Thank you for your business!</p>
               <p className="text-sm">This receipt was generated electronically and is valid without signature.</p>
-              <p className="text-xs mt-4 text-secondary">
-                View online: {window.location.href}
-              </p>
+              <div className="mt-4 flex flex-col items-center gap-2">
+                {qrCodeUrl && (
+                  <div className="mb-2">
+                    <p className="text-xs mb-1">Scan QR code to view online:</p>
+                    <img
+                      src={qrCodeUrl}
+                      alt="QR Code for receipt"
+                      className="w-16 h-16 mx-auto"
+                    />
+                  </div>
+                )}
+                <p className="text-xs">
+                  View online: {window.location.href}
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -38,6 +38,13 @@ export default function Dashboard() {
    const [success, setSuccess] = useState('');
    // Templates state
    const [selectedTemplate, setSelectedTemplate] = useState('classic');
+   const [customColors, setCustomColors] = useState({
+     primary: '#1f2937',
+     secondary: '#6b7280',
+     accent: '#3b82f6'
+   });
+   const [customFont, setCustomFont] = useState('inter');
+   const [showAdvanced, setShowAdvanced] = useState(false);
    const [templates] = useState([
      {
        id: 'classic',
@@ -65,7 +72,16 @@ export default function Dashboard() {
      }
    ]);
 
-   const ReceiptTemplatePreview = ({ templateId }) => {
+   const fonts = [
+     { id: 'inter', name: 'Inter', family: 'Inter, sans-serif' },
+     { id: 'roboto', name: 'Roboto', family: 'Roboto, sans-serif' },
+     { id: 'opensans', name: 'Open Sans', family: 'Open Sans, sans-serif' },
+     { id: 'lato', name: 'Lato', family: 'Lato, sans-serif' },
+     { id: 'playfair', name: 'Playfair Display', family: 'Playfair Display, serif' },
+     { id: 'merriweather', name: 'Merriweather', family: 'Merriweather, serif' }
+   ];
+
+   const ReceiptTemplatePreview = ({ templateId }: { templateId: string }) => {
   const baseClasses = "w-full h-20 rounded p-1 text-[8px] overflow-hidden shadow-inner flex flex-col justify-between";
 
   // --- Classic Template ---
@@ -760,7 +776,6 @@ export default function Dashboard() {
                       <div className="text-center">
                         <div className="w-full h-20 mb-3 bg-secondary rounded flex items-center justify-center">
                           <ReceiptTemplatePreview templateId={template.id} />
-                          
                         </div>
                         <h3 className="font-semibold text-primary">{template.name}</h3>
                         <p className="text-sm text-secondary mt-1">{template.description}</p>
@@ -778,6 +793,131 @@ export default function Dashboard() {
                     {saving ? 'Saving...' : 'Save Template'}
                   </button>
                 </div>
+              </div>
+
+              <div className="bg-primary p-6 rounded-lg shadow-sm">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-primary">Advanced Customization</h2>
+                  <button
+                    onClick={() => setShowAdvanced(!showAdvanced)}
+                    className="px-4 py-2 rounded-md font-medium transition-colors duration-200 bg-secondary text-primary hover:bg-accent hover:text-white focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                  >
+                    {showAdvanced ? 'Hide' : 'Show'} Advanced Options
+                  </button>
+                </div>
+
+                {showAdvanced && (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <h3 className="text-md font-medium text-primary mb-3">Color Scheme</h3>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm font-medium text-secondary mb-1">Primary Color</label>
+                            <input
+                              type="color"
+                              value={customColors.primary}
+                              onChange={(e) => setCustomColors({...customColors, primary: e.target.value})}
+                              className="w-full h-10 rounded border border-color"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-secondary mb-1">Secondary Color</label>
+                            <input
+                              type="color"
+                              value={customColors.secondary}
+                              onChange={(e) => setCustomColors({...customColors, secondary: e.target.value})}
+                              className="w-full h-10 rounded border border-color"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-secondary mb-1">Accent Color</label>
+                            <input
+                              type="color"
+                              value={customColors.accent}
+                              onChange={(e) => setCustomColors({...customColors, accent: e.target.value})}
+                              className="w-full h-10 rounded border border-color"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-md font-medium text-primary mb-3">Typography</h3>
+                        <div>
+                          <label className="block text-sm font-medium text-secondary mb-1">Font Family</label>
+                          <select
+                            value={customFont}
+                            onChange={(e) => setCustomFont(e.target.value)}
+                            className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                          >
+                            {fonts.map((font) => (
+                              <option key={font.id} value={font.id} style={{ fontFamily: font.family }}>
+                                {font.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="mt-4">
+                          <h4 className="text-sm font-medium text-secondary mb-2">Preview</h4>
+                          <div
+                            className="p-3 bg-secondary rounded border"
+                            style={{ fontFamily: fonts.find(f => f.id === customFont)?.family }}
+                          >
+                            <p className="text-sm">Sample receipt text with selected font</p>
+                            <p className="text-xs text-secondary">₦1,250.00</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-6">
+                      <h3 className="text-md font-medium text-primary mb-3">Layout Options</h3>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="showLogo"
+                            className="h-4 w-4 text-accent focus:ring-accent border-color rounded"
+                            defaultChecked
+                          />
+                          <label htmlFor="showLogo" className="ml-2 text-sm text-secondary">
+                            Show business logo
+                          </label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="showQr"
+                            className="h-4 w-4 text-accent focus:ring-accent border-color rounded"
+                            defaultChecked
+                          />
+                          <label htmlFor="showQr" className="ml-2 text-sm text-secondary">
+                            Include QR code
+                          </label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="compactMode"
+                            className="h-4 w-4 text-accent focus:ring-accent border-color rounded"
+                          />
+                          <label htmlFor="compactMode" className="ml-2 text-sm text-secondary">
+                            Compact layout
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        className="px-6 py-3 rounded-lg font-medium transition-colors duration-200 bg-accent text-white focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                      >
+                        Save Customizations
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="bg-primary p-6 rounded-lg shadow-sm">
