@@ -162,7 +162,7 @@ export default function CreateReceipt() {
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-primary mb-4">You've reached the free trial limit</h2>
+            <h2 className="text-2xl font-bold text-primary mb-4">You&apos;ve reached the free trial limit</h2>
             <p className="text-secondary mb-6">Create an account to generate unlimited receipts and save them permanently.</p>
             <div className="space-x-4">
               <Link
