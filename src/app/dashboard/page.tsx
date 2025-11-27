@@ -350,7 +350,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <ChartBarIcon className="w-6 h-6 flex-shrink-0" />
+                <ChartBarIcon className="w-4 h-4 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Overview</span>}
               </button>
               <button
@@ -364,7 +364,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <DocumentTextIcon className="w-6 h-6 flex-shrink-0" />
+                <DocumentTextIcon className="w-4 h-4 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Receipts</span>}
               </button>
               <button
@@ -378,7 +378,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <DocumentTextIcon className="w-6 h-6 flex-shrink-0" />
+                <DocumentTextIcon className="w-4 h-4 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Templates</span>}
               </button>
               <button
@@ -392,7 +392,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <CogIcon className="w-6 h-6 flex-shrink-0" />
+                <CogIcon className="w-4 h-4 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Business Settings</span>}
               </button>
             </nav>
@@ -422,7 +422,7 @@ export default function Dashboard() {
                 className="md:hidden p-2 rounded-md text-primary hover:bg-secondary"
                 aria-label="Toggle sidebar"
               >
-                <Bars3Icon className="w-6 h-6" />
+                <Bars3Icon className="w-4 h-4" />
               </button>
               {activeTab !== 'settings' && (
                 <Link
@@ -442,7 +442,7 @@ export default function Dashboard() {
                 <div className="bg-primary p-6 rounded-lg shadow-sm">
                   <div className="flex items-center">
                     <div className="p-2 bg-accent rounded-lg">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
