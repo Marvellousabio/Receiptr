@@ -359,6 +359,29 @@ function TryFreeContent() {
                   placeholder="https://example.com"
                 />
               </div>
+
+              <div className="text-center">
+                <p className="text-secondary mb-4">Create an account to save this receipt and generate unlimited receipts.</p>
+                <div className="space-x-4">
+                  <Link
+                    href="/register"
+                    className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
+                  >
+                    Sign Up to Save
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setGeneratedReceipt(null);
+                      setBusiness({ name: '', address: '', phone: '', website: '', logoUrl: '' });
+                      setCustomerName('');
+                      setItems([{ description: '', quantity: 1, price: 0 }]);
+                    }}
+                    className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
+                  >
+                    Create Another
+                  </button>
+                </div>
+              </div>
               <div>
                 <label htmlFor="businessLogo" className="block text-sm font-medium text-secondary mb-1">
                   Logo URL
@@ -694,29 +717,6 @@ function TryFreeContent() {
                   <LinkIcon className="w-5 h-5" />
                   <span className="hidden sm:inline">Copy Link</span>
                 </button>
-              </div>
-
-              <div className="text-center">
-                <p className="text-secondary mb-4">Create an account to save this receipt and generate unlimited receipts.</p>
-                <div className="space-x-4">
-                  <Link
-                    href="/register"
-                    className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
-                  >
-                    Sign Up to Save
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setGeneratedReceipt(null);
-                      setBusiness({ name: '', address: '', phone: '', website: '', logoUrl: '' });
-                      setCustomerName('');
-                      setItems([{ description: '', quantity: 1, price: 0 }]);
-                    }}
-                    className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
-                  >
-                    Create Another
-                  </button>
-                </div>
               </div>
             </div>
           </div>

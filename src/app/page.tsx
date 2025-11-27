@@ -63,6 +63,61 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Problem Section */}
+      <div className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={itemVariants}
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              The Receipt Problem in Lagos
+            </h2>
+            <p className="text-lg text-gray-600">
+              75% of small businesses don&apos;t provide receipts to customers after purchase, and those that do lack accessible solutions.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid md:grid-cols-2 gap-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={containerVariants}
+          >
+            <motion.div className="bg-white p-8 rounded-lg shadow-sm" variants={itemVariants}>
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">The Problem</h3>
+              <p className="text-gray-600 mb-4">
+                In Lagos, 75% of small businesses fail to provide receipts to customers after transactions. Even when receipts are issued, they often aren&apos;t accessible anytime, leading to stressful situations where customers must return to sellers to retrieve lost receipts. This is not only inconvenient but also economically inefficient.
+              </p>
+            </motion.div>
+
+            <motion.div className="bg-white p-8 rounded-lg shadow-sm" variants={itemVariants}>
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">The Solution</h3>
+              <p className="text-gray-600 mb-4">
+                Receiptr is an online receipt generator designed to solve this problem. Register your account, set up your business name and details, choose from preferred templates, and during daily transactions, simply enter the goods name, price, and customer name to generate professional receipts.
+              </p>
+              <p className="text-gray-600">
+                Each receipt includes your business details, transaction information, and a unique code for online viewing anytime. Print as PDF, download as image or PDF, and easily share via Gmail or social media.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
       {/* Features Section */}
       <div className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

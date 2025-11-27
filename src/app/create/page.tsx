@@ -611,22 +611,6 @@ function CreateReceiptContent() {
                   <span className="hidden sm:inline">Copy Link</span>
                 </button>
               </div>
-
-              <div className="text-center">
-                <p className="text-secondary mb-4">Receipt created successfully! You can now print, download, or share it.</p>
-                <div className="space-x-4">
-                  <button
-                    onClick={() => {
-                      setGeneratedReceipt(null);
-                      setCustomerName('');
-                      setItems([{ description: '', quantity: 1, price: 0 }]);
-                    }}
-                    className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
-                  >
-                    Create Another Receipt
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         )}

@@ -350,7 +350,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <ChartBarIcon className={`${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                <ChartBarIcon className="w-6 h-6 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Overview</span>}
               </button>
               <button
@@ -364,7 +364,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <DocumentTextIcon className={`${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                <DocumentTextIcon className="w-6 h-6 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Receipts</span>}
               </button>
               <button
@@ -378,7 +378,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <DocumentTextIcon className={`${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                <DocumentTextIcon className="w-6 h-6 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Templates</span>}
               </button>
               <button
@@ -392,7 +392,7 @@ export default function Dashboard() {
                     : 'text-secondary hover:bg-secondary'
                 } ${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'justify-start' : 'justify-center'}`}
               >
-                <CogIcon className={`${((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                <CogIcon className="w-6 h-6 flex-shrink-0" />
                 {((sidebarExpanded && !mobileSidebarOpen) || mobileSidebarOpen) && <span className="ml-2 truncate">Business Settings</span>}
               </button>
             </nav>
