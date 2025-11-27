@@ -40,6 +40,8 @@ function TryFreeContent() {
   const [attemptCount, setAttemptCount] = useState(0);
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState('classic');
+  const [selectedColor, setSelectedColor] = useState('#000000');
   const [generatedReceipt, setGeneratedReceipt] = useState<{
     receiptNumber: string;
     business: Business;
@@ -54,7 +56,7 @@ function TryFreeContent() {
     // Check attempt count
     const attempts = parseInt(localStorage.getItem('tryFreeAttempts') || '0');
     setAttemptCount(attempts);
-    if (attempts >= 2) {
+    if (attempts >= 3) {
       setShowSignupPrompt(true);
     }
   }, []);
@@ -381,6 +383,29 @@ function TryFreeContent() {
                     Create Another
                   </button>
                 </div>
+  
+                <div className="text-center">
+                  <p className="text-secondary mb-4">Create an account to save this receipt and generate unlimited receipts.</p>
+                  <div className="space-x-4">
+                    <Link
+                      href="/register"
+                      className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
+                    >
+                      Sign Up to Save
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setGeneratedReceipt(null);
+                        setBusiness({ name: '', address: '', phone: '', website: '', logoUrl: '' });
+                        setCustomerName('');
+                        setItems([{ description: '', quantity: 1, price: 0 }]);
+                      }}
+                      className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
+                    >
+                      Create Another
+                    </button>
+                  </div>
+                </div>
               </div>
               <div>
                 <label htmlFor="businessLogo" className="block text-sm font-medium text-secondary mb-1">
@@ -547,6 +572,40 @@ function TryFreeContent() {
             </div>
           </div>
 
+          {/* Template & Color Selection */}
+          <div className="bg-secondary p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium text-primary mb-4">Customize Receipt</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-2">
+                  Template
+                </label>
+                <select
+                  value={selectedTemplate}
+                  onChange={(e) => setSelectedTemplate(e.target.value)}
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  title="Choose receipt template"
+                >
+                  <option value="classic">Classic</option>
+                  <option value="modern">Modern</option>
+                  <option value="minimal">Minimal</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-2">
+                  Text Color
+                </label>
+                <input
+                  type="color"
+                  value={selectedColor}
+                  onChange={(e) => setSelectedColor(e.target.value)}
+                  className="w-full h-10 border border-color rounded-md cursor-pointer"
+                  title="Choose text color"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Submit */}
           <div className="flex justify-end space-x-4">
             <button
@@ -572,7 +631,7 @@ function TryFreeContent() {
           <div className="mt-8">
             <h2 className="text-lg font-medium text-primary mb-4">Receipt Preview</h2>
             <div className="bg-white shadow-lg border-2 border-gray-300 overflow-hidden max-w-sm mx-auto font-mono text-sm">
-              <div className="p-4" id="try-free-receipt-content">
+              <div className="p-4" id="try-free-receipt-content" style={{ color: selectedColor }}>
                 {/* Header */}
                 <div className="text-center mb-4 border-b-2 border-dashed border-gray-400 pb-2">
                   {generatedReceipt.business.logoUrl && (
@@ -717,6 +776,29 @@ function TryFreeContent() {
                   <LinkIcon className="w-5 h-5" />
                   <span className="hidden sm:inline">Copy Link</span>
                 </button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-secondary mb-4">Create an account to save this receipt and generate unlimited receipts.</p>
+                <div className="space-x-4">
+                  <Link
+                    href="/register"
+                    className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
+                  >
+                    Sign Up to Save
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setGeneratedReceipt(null);
+                      setBusiness({ name: '', address: '', phone: '', website: '', logoUrl: '' });
+                      setCustomerName('');
+                      setItems([{ description: '', quantity: 1, price: 0 }]);
+                    }}
+                    className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
+                  >
+                    Create Another
+                  </button>
+                </div>
               </div>
             </div>
           </div>
