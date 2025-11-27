@@ -1,7 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
@@ -16,33 +15,49 @@ interface Item {
   price: number;
 }
 
-function CreateReceiptContent() {
-   const { data: session, status } = useSession();
-   const router = useRouter();
-   const searchParams = useSearchParams();
-   const isTryMode = searchParams.get('mode') === 'try';
-   const [customerName, setCustomerName] = useState('');
-   const [paymentMethod, setPaymentMethod] = useState('Cash');
-   const [items, setItems] = useState<Item[]>([{ description: '', quantity: 1, price: 0 }]);
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState('');
-   const [attemptCount, setAttemptCount] = useState(0);
-   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
-   const [showShareOptions, setShowShareOptions] = useState(false);
-   const [generatedReceipt, setGeneratedReceipt] = useState<{receiptNumber: string; customerName: string; items: Item[]; total: number; paymentMethod: string; createdAt: string} | null>(null);
+interface Business {
+  name: string;
+  address: string;
+  phone: string;
+  website: string;
+  logoUrl: string;
+}
+
+function TryFreeContent() {
+  const router = useRouter();
+  const [business, setBusiness] = useState<Business>({
+    name: '',
+    address: '',
+    phone: '',
+    website: '',
+    logoUrl: '',
+  });
+  const [customerName, setCustomerName] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Cash');
+  const [items, setItems] = useState<Item[]>([{ description: '', quantity: 1, price: 0 }]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [generatedReceipt, setGeneratedReceipt] = useState<{
+    receiptNumber: string;
+    business: Business;
+    customerName: string;
+    items: Item[];
+    total: number;
+    paymentMethod: string;
+    createdAt: string;
+  } | null>(null);
 
   useEffect(() => {
-    if (isTryMode) {
-      // Anonymous mode - check attempt count
-      const attempts = parseInt(localStorage.getItem('receiptAttempts') || '0');
-      setAttemptCount(attempts);
-      if (attempts >= 2) {
-        setShowSignupPrompt(true);
-      }
-    } else if (status === 'unauthenticated') {
-      router.push('/login');
+    // Check attempt count
+    const attempts = parseInt(localStorage.getItem('tryFreeAttempts') || '0');
+    setAttemptCount(attempts);
+    if (attempts >= 2) {
+      setShowSignupPrompt(true);
     }
-  }, [status, router, isTryMode]);
+  }, []);
 
   useEffect(() => {
     // Close share dropdown when clicking outside
@@ -78,6 +93,10 @@ function CreateReceiptContent() {
     setItems(newItems);
   };
 
+  const updateBusiness = (field: keyof Business, value: string) => {
+    setBusiness({ ...business, [field]: value });
+  };
+
   const calculateSubtotal = () => {
     return items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
   };
@@ -89,7 +108,7 @@ function CreateReceiptContent() {
   };
 
   const handlePrint = () => {
-    const printContent = document.getElementById('receipt-content');
+    const printContent = document.getElementById('try-free-receipt-content');
     if (printContent) {
       const printWindow = window.open('', '_blank');
       if (printWindow) {
@@ -114,7 +133,7 @@ function CreateReceiptContent() {
   };
 
   const handleDownloadImage = async () => {
-    const receiptElement = document.getElementById('receipt-content');
+    const receiptElement = document.getElementById('try-free-receipt-content');
     if (receiptElement) {
       try {
         const canvas = await html2canvas(receiptElement, {
@@ -137,7 +156,7 @@ function CreateReceiptContent() {
 
   const shareToWhatsApp = () => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this receipt!`);
+    const text = encodeURIComponent(`Check out this receipt from ${generatedReceipt?.business.name || 'my business'}!`);
     window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
     setShowShareOptions(false);
   };
@@ -150,13 +169,13 @@ function CreateReceiptContent() {
 
   const shareToTwitter = () => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this receipt!`);
+    const text = encodeURIComponent(`Check out this receipt from ${generatedReceipt?.business.name || 'my business'}!`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
     setShowShareOptions(false);
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent(`Receipt`);
+    const subject = encodeURIComponent(`Receipt from ${generatedReceipt?.business.name || 'my business'}`);
     const body = encodeURIComponent(`Check out this receipt!\n\n${window.location.href}`);
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
     setShowShareOptions(false);
@@ -177,6 +196,12 @@ function CreateReceiptContent() {
     setError('');
 
     // Validate form
+    if (!business.name.trim() || !business.address.trim() || !business.phone.trim()) {
+      setError('Business name, address, and phone are required');
+      setLoading(false);
+      return;
+    }
+
     if (!customerName.trim()) {
       setError('Customer name is required');
       setLoading(false);
@@ -189,57 +214,33 @@ function CreateReceiptContent() {
       return;
     }
 
-    if (isTryMode && attemptCount >= 2) {
+    if (attemptCount >= 2) {
       setShowSignupPrompt(true);
       setLoading(false);
       return;
     }
 
     try {
-      if (isTryMode) {
-        // Anonymous mode - generate receipt locally
-        const receiptNumber = `TRY-${Date.now()}`;
-        const total = calculateTotal();
-        const receipt = {
-          receiptNumber,
-          customerName,
-          items,
-          paymentMethod,
-          total,
-          createdAt: new Date().toISOString(),
-        };
+      // Generate receipt locally
+      const receiptNumber = `TRY-FREE-${Date.now()}`;
+      const total = calculateTotal();
+      const receipt = {
+        receiptNumber,
+        business,
+        customerName,
+        items,
+        paymentMethod,
+        total,
+        createdAt: new Date().toISOString(),
+      };
 
-        // Increment attempt count
-        const newAttempts = attemptCount + 1;
-        localStorage.setItem('receiptAttempts', newAttempts.toString());
-        setAttemptCount(newAttempts);
+      // Increment attempt count
+      const newAttempts = attemptCount + 1;
+      localStorage.setItem('tryFreeAttempts', newAttempts.toString());
+      setAttemptCount(newAttempts);
 
-        setGeneratedReceipt(receipt);
-        setShowSignupPrompt(true);
-      } else {
-        // Authenticated mode - save to database
-        const response = await fetch('/api/receipts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            customerName,
-            items,
-            paymentMethod,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          setError(data.error || 'Failed to create receipt');
-          return;
-        }
-
-        // Redirect to the receipt view
-        router.push(`/receipts/${data.receipt.receiptNumber}`);
-      }
+      setGeneratedReceipt(receipt);
+      setShowSignupPrompt(true);
     } catch (error) {
       setError('An error occurred. Please try again.');
     } finally {
@@ -247,22 +248,7 @@ function CreateReceiptContent() {
     }
   };
 
-  if (status === 'loading' && !isTryMode) {
-    return (
-      <div className="min-h-screen bg-primary">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session && !isTryMode) {
-    return null;
-  }
-
-  if (showSignupPrompt && isTryMode && attemptCount >= 2) {
+  if (showSignupPrompt && attemptCount >= 2) {
     return (
       <div className="min-h-screen bg-primary">
         <Navbar />
@@ -300,10 +286,10 @@ function CreateReceiptContent() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-primary">
-            {isTryMode ? 'Try Receiptr Free' : 'Create New Receipt'}
+            Try Receiptr Free
           </h1>
           <p className="text-secondary mt-1">
-            {isTryMode ? `Generate a receipt (attempt ${attemptCount + 1} of 2)` : 'Generate a professional receipt for your customer'}
+            Generate a receipt with your business details (attempt {attemptCount + 1} of 2)
           </p>
         </div>
 
@@ -313,6 +299,81 @@ function CreateReceiptContent() {
               {error}
             </div>
           )}
+
+          {/* Business Information */}
+          <div className="bg-secondary p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium text-primary mb-4">Business Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="businessName" className="block text-sm font-medium text-secondary mb-1">
+                  Business Name *
+                </label>
+                <input
+                  type="text"
+                  id="businessName"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  value={business.name}
+                  onChange={(e) => updateBusiness('name', e.target.value)}
+                  placeholder="Enter business name"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="businessPhone" className="block text-sm font-medium text-secondary mb-1">
+                  Phone *
+                </label>
+                <input
+                  type="text"
+                  id="businessPhone"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  value={business.phone}
+                  onChange={(e) => updateBusiness('phone', e.target.value)}
+                  placeholder="Enter phone number"
+                  required
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="businessAddress" className="block text-sm font-medium text-secondary mb-1">
+                  Address *
+                </label>
+                <input
+                  type="text"
+                  id="businessAddress"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  value={business.address}
+                  onChange={(e) => updateBusiness('address', e.target.value)}
+                  placeholder="Enter business address"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="businessWebsite" className="block text-sm font-medium text-secondary mb-1">
+                  Website
+                </label>
+                <input
+                  type="url"
+                  id="businessWebsite"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  value={business.website}
+                  onChange={(e) => updateBusiness('website', e.target.value)}
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="businessLogo" className="block text-sm font-medium text-secondary mb-1">
+                  Logo URL
+                </label>
+                <input
+                  type="url"
+                  id="businessLogo"
+                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  value={business.logoUrl}
+                  onChange={(e) => updateBusiness('logoUrl', e.target.value)}
+                  placeholder="https://example.com/logo.png"
+                />
+              </div>
+            </div>
+          </div>
 
           {/* Customer Information */}
           <div className="bg-secondary p-6 rounded-lg shadow-sm">
@@ -407,14 +468,17 @@ function CreateReceiptContent() {
                       min="0"
                       step="0.01"
                       className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                      value={item.price===0?'':item.price}
-                      onChange={(e)=>{
-                        const rawValue= e.target.value;
+                      value={item.price === 0 ? '' : item.price}
+                      onChange={(e) => {
+                        const rawValue = e.target.value;
                         let newValue;
-
-                        if (rawValue==='' || rawValue==='.'){newValue=0}
-                        else { newValue= parseFloat(rawValue) || 0};
-                        updateItem(index, 'price',newValue);}}
+                        if (rawValue === '' || rawValue === '.') {
+                          newValue = 0;
+                        } else {
+                          newValue = parseFloat(rawValue) || 0;
+                        }
+                        updateItem(index, 'price', newValue);
+                      }}
                       placeholder="0.00"
                       required
                     />
@@ -485,10 +549,29 @@ function CreateReceiptContent() {
           <div className="mt-8">
             <h2 className="text-lg font-medium text-primary mb-4">Receipt Preview</h2>
             <div className="bg-white shadow-lg border-2 border-gray-300 overflow-hidden max-w-sm mx-auto font-mono text-sm">
-              <div className="p-4" id="receipt-content">
+              <div className="p-4" id="try-free-receipt-content">
                 {/* Header */}
                 <div className="text-center mb-4 border-b-2 border-dashed border-gray-400 pb-2">
-                  <div className="font-bold text-lg mb-1">RECEIPT</div>
+                  {generatedReceipt.business.logoUrl && (
+                    <img
+                      src={generatedReceipt.business.logoUrl}
+                      alt="Business Logo"
+                      className="w-12 h-12 mx-auto mb-2 object-contain"
+                    />
+                  )}
+                  <div className="font-bold text-lg mb-1">{generatedReceipt.business.name}</div>
+                  <div className="text-xs text-gray-600 leading-tight">
+                    <div>{generatedReceipt.business.address}</div>
+                    <div>{generatedReceipt.business.phone}</div>
+                    {generatedReceipt.business.website && (
+                      <div>{generatedReceipt.business.website}</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Receipt Info */}
+                <div className="text-center mb-4">
+                  <div className="font-bold">RECEIPT</div>
                   <div className="text-xs">#{generatedReceipt.receiptNumber}</div>
                   <div className="text-xs">{new Date(generatedReceipt.createdAt).toLocaleDateString()} {new Date(generatedReceipt.createdAt).toLocaleTimeString()}</div>
                 </div>
@@ -532,6 +615,7 @@ function CreateReceiptContent() {
                 {/* Footer */}
                 <div className="text-center border-t border-dashed border-gray-400 pt-2">
                   <div className="text-xs mb-1">Thank you for your business!</div>
+                  <div className="text-xs text-gray-500">This is a preview. Create an account to generate real receipts.</div>
                   <div className="text-xs mt-2">================================</div>
                 </div>
               </div>
@@ -613,17 +697,24 @@ function CreateReceiptContent() {
               </div>
 
               <div className="text-center">
-                <p className="text-secondary mb-4">Receipt created successfully! You can now print, download, or share it.</p>
+                <p className="text-secondary mb-4">Create an account to save this receipt and generate unlimited receipts.</p>
                 <div className="space-x-4">
+                  <Link
+                    href="/register"
+                    className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent"
+                  >
+                    Sign Up to Save
+                  </Link>
                   <button
                     onClick={() => {
                       setGeneratedReceipt(null);
+                      setBusiness({ name: '', address: '', phone: '', website: '', logoUrl: '' });
                       setCustomerName('');
                       setItems([{ description: '', quantity: 1, price: 0 }]);
                     }}
                     className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50"
                   >
-                    Create Another Receipt
+                    Create Another
                   </button>
                 </div>
               </div>
@@ -635,7 +726,7 @@ function CreateReceiptContent() {
   );
 }
 
-export default function CreateReceipt() {
+export default function TryFree() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-primary">
@@ -645,7 +736,7 @@ export default function CreateReceipt() {
         </div>
       </div>
     }>
-      <CreateReceiptContent />
+      <TryFreeContent />
     </Suspense>
   );
 }
