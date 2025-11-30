@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { PrinterIcon, PhoneIcon, EnvelopeIcon, LinkIcon, DocumentArrowDownIcon, PhotoIcon, QrCodeIcon } from '@heroicons/react/24/outline';
+import { PrinterIcon, PhoneIcon, EnvelopeIcon, LinkIcon, DocumentArrowDownIcon, PhotoIcon, QrCodeIcon, ShareIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import QRCode from 'qrcode';
 
 interface Receipt {
@@ -34,6 +34,7 @@ export default function ReceiptView() {
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState('');
    const [qrCodeUrl, setQrCodeUrl] = useState('');
+   const [shareMenuOpen, setShareMenuOpen] = useState(false);
 
   useEffect(() => {
     if (params.id) {
@@ -186,6 +187,7 @@ export default function ReceiptView() {
         {/* Action Buttons */}
         <div className="mb-6 flex flex-wrap gap-3 justify-center print:hidden">
           <button
+            aria-label='Print Receipt'
             onClick={handlePrint}
             className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
@@ -193,54 +195,80 @@ export default function ReceiptView() {
             Print
           </button>
           <button
+            aria-label='Download PDF'
             onClick={handleDownloadPDF}
             className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
             <DocumentArrowDownIcon className="w-5 h-5" />
-            Download PDF
+            PDF
           </button>
           <button
+            aria-label='Download Image'
             onClick={() => handleShareAsImage('download')}
             className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
           >
             <PhotoIcon className="w-5 h-5" />
-            Download Image
+            Image
           </button>
-          <button
-            onClick={() => handleShare('whatsapp')}
-            className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
-          >
-            <PhoneIcon className="w-5 h-5" />
-            WhatsApp
-          </button>
-          <button
-            onClick={() => handleShareAsImage('facebook')}
-            className="bg-blue-800 text-white hover:bg-blue-900 px-4 py-2 rounded-md font-medium flex items-center gap-2"
-          >
-            <PhotoIcon className="w-5 h-5" />
-            Share on Facebook
-          </button>
-          <button
-            onClick={() => handleShareAsImage('twitter')}
-            className="bg-sky-500 text-white hover:bg-sky-600 px-4 py-2 rounded-md font-medium flex items-center gap-2"
-          >
-            <PhotoIcon className="w-5 h-5" />
-            Share on Twitter
-          </button>
-          <button
-            onClick={() => handleShare('email')}
-            className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
-          >
-            <EnvelopeIcon className="w-5 h-5" />
-            Email
-          </button>
-          <button
-            onClick={() => handleShare('copy')}
-            className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
-          >
-            <LinkIcon className="w-5 h-5" />
-            Copy Link
-          </button>
+          <div className="relative">
+            <button
+              aria-label='Share'
+              onClick={() => setShareMenuOpen(!shareMenuOpen)}
+              className="bg-secondary text-primary hover:bg-primary px-4 py-2 rounded-md font-medium flex items-center gap-2"
+            >
+              <ShareIcon className="w-5 h-5" />
+              Share
+              <ChevronDownIcon className="w-4 h-4" />
+            </button>
+            {shareMenuOpen && (
+              <div className="absolute top-full mt-2 bg-secondary border border-gray-300 rounded-md shadow-lg z-10 min-w-[160px]">
+                <div className="py-1">
+                  <button
+                    onClick={() => { handleShare('whatsapp'); setShareMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-primary"
+                  >
+                    <PhoneIcon className="w-4 h-4" />
+                    WhatsApp
+                  </button>
+                  <button
+                    onClick={() => { handleShareAsImage('facebook'); setShareMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-primary"
+                  >
+                    <PhotoIcon className="w-4 h-4" />
+                    Facebook
+                  </button>
+                  <button
+                    onClick={() => { handleShareAsImage('linkedin'); setShareMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-primary"
+                  >
+                    <PhotoIcon className="w-4 h-4" />
+                    LinkedIn
+                  </button>
+                  <button
+                    onClick={() => { handleShareAsImage('twitter'); setShareMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-primary"
+                  >
+                    <PhotoIcon className="w-4 h-4" />
+                    Twitter
+                  </button>
+                  <button
+                    onClick={() => { handleShare('email'); setShareMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-primary"
+                  >
+                    <EnvelopeIcon className="w-4 h-4" />
+                    Email
+                  </button>
+                  <button
+                    onClick={() => { handleShare('copy'); setShareMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-primary"
+                  >
+                    <LinkIcon className="w-4 h-4" />
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Receipt */}
