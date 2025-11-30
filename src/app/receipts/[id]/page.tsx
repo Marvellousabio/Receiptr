@@ -197,18 +197,18 @@ export default function ReceiptView() {
           <button
             aria-label='Download PDF'
             onClick={handleDownloadPDF}
-            className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
+            className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md font-medium items-center gap-2"
           >
             <DocumentArrowDownIcon className="w-5 h-5" />
-            PDF
+           <div className='hidden md:flex'>PDF</div> 
           </button>
           <button
             aria-label='Download Image'
             onClick={() => handleShareAsImage('download')}
-            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md font-medium flex items-center gap-2"
+            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md font-medium items-center gap-2"
           >
             <PhotoIcon className="w-5 h-5" />
-            Image
+            <div className='hidden md:flex'>Image</div>
           </button>
           <div className="relative">
             <button

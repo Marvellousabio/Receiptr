@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import { PrinterIcon, PhotoIcon, ShareIcon, LinkIcon } from '@heroicons/react/24/outline';
 import html2canvas from 'html2canvas';
+import ReceiptTemplatePreview from '@/components/dashboard/ReceiptTemplatePreview';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,29 @@ interface Business {
   website: string;
   logoUrl: string;
 }
+
+const templates = [
+  {
+    id: 'classic',
+    name: 'Classic',
+    description: 'Clean and professional design',
+  },
+  {
+    id: 'modern',
+    name: 'Modern',
+    description: 'Contemporary design with bold colors',
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Simple and elegant',
+  },
+  {
+    id: 'corporate',
+    name: 'Corporate',
+    description: 'Formal business template',
+  }
+];
 
 function TryFreeContent() {
   const router = useRouter();
@@ -56,7 +80,7 @@ function TryFreeContent() {
     // Check attempt count
     const attempts = parseInt(localStorage.getItem('tryFreeAttempts') || '0');
     setAttemptCount(attempts);
-    if (attempts >= 3) {
+    if (attempts >= 5) {
       setShowSignupPrompt(true);
     }
   }, []);
@@ -216,7 +240,7 @@ function TryFreeContent() {
       return;
     }
 
-    if (attemptCount >= 2) {
+    if (attemptCount >= 5) {
       setShowSignupPrompt(true);
       setLoading(false);
       return;
@@ -250,7 +274,7 @@ function TryFreeContent() {
     }
   };
 
-  if (showSignupPrompt && attemptCount >= 2) {
+  if (showSignupPrompt && attemptCount >= 5) {
     return (
       <div className="min-h-screen bg-primary">
         <Navbar />
@@ -291,7 +315,7 @@ function TryFreeContent() {
             Try Receiptr Free
           </h1>
           <p className="text-secondary mt-1">
-            Generate a receipt with your business details (attempt {attemptCount + 1} of 2)
+            Generate a receipt with your business details (attempt {attemptCount + 1} of 5)
           </p>
         </div>
 
@@ -460,6 +484,47 @@ function TryFreeContent() {
             </div>
           </div>
 
+          {/* Template Selection */}
+          <div className="bg-secondary p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium text-primary mb-4">Choose Receipt Template</h2>
+            <p className="text-secondary mb-6">Select a template for your receipt.</p>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {templates.map((template) => (
+                <div
+                  key={template.id}
+                  onClick={() => setSelectedTemplate(template.id)}
+                  className={`cursor-pointer border-2 rounded-lg p-4 transition-colors ${
+                    selectedTemplate === template.id
+                      ? 'border-accent bg-accent bg-opacity-10'
+                      : 'border-color hover:border-accent'
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="w-full h-20 mb-3 bg-secondary rounded flex items-center justify-center">
+                      <ReceiptTemplatePreview templateId={template.id} />
+                    </div>
+                    <h3 className="font-semibold text-primary">{template.name}</h3>
+                    <p className="text-sm text-secondary mt-1">{template.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-2">
+                Text Color
+              </label>
+              <input
+                type="color"
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+                className="w-full h-10 border border-color rounded-md cursor-pointer"
+                title="Choose text color"
+              />
+            </div>
+          </div>
+
           {/* Items */}
           <div className="bg-secondary p-6 rounded-lg shadow-sm">
             <div className="flex justify-between items-center mb-4">
@@ -572,39 +637,6 @@ function TryFreeContent() {
             </div>
           </div>
 
-          {/* Template & Color Selection */}
-          <div className="bg-secondary p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-medium text-primary mb-4">Customize Receipt</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-2">
-                  Template
-                </label>
-                <select
-                  value={selectedTemplate}
-                  onChange={(e) => setSelectedTemplate(e.target.value)}
-                  className="w-full px-3 py-2 border border-color rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                  title="Choose receipt template"
-                >
-                  <option value="classic">Classic</option>
-                  <option value="modern">Modern</option>
-                  <option value="minimal">Minimal</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-2">
-                  Text Color
-                </label>
-                <input
-                  type="color"
-                  value={selectedColor}
-                  onChange={(e) => setSelectedColor(e.target.value)}
-                  className="w-full h-10 border border-color rounded-md cursor-pointer"
-                  title="Choose text color"
-                />
-              </div>
-            </div>
-          </div>
 
           {/* Submit */}
           <div className="flex justify-end space-x-4">
