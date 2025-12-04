@@ -13,9 +13,16 @@ interface TemplatesTabProps {
   setCustomColors: (colors: { primary: string; secondary: string; accent: string }) => void;
   customFont: string;
   setCustomFont: (font: string) => void;
+  layoutOptions: {
+    showLogo: boolean;
+    showQr: boolean;
+    compactMode: boolean;
+  };
+  setLayoutOptions: (options: { showLogo: boolean; showQr: boolean; compactMode: boolean }) => void;
   showAdvanced: boolean;
   setShowAdvanced: (show: boolean) => void;
   handleTemplateSubmit: () => void;
+  handleCustomizationsSubmit: () => void;
   saving: boolean;
   error: string;
   success: string;
@@ -64,9 +71,12 @@ export default function TemplatesTab({
   setCustomColors,
   customFont,
   setCustomFont,
+  layoutOptions,
+  setLayoutOptions,
   showAdvanced,
   setShowAdvanced,
   handleTemplateSubmit,
+  handleCustomizationsSubmit,
   saving,
   error,
   success,
@@ -201,8 +211,9 @@ export default function TemplatesTab({
                   <input
                     type="checkbox"
                     id="showLogo"
+                    checked={layoutOptions.showLogo}
+                    onChange={(e) => setLayoutOptions({...layoutOptions, showLogo: e.target.checked})}
                     className="h-4 w-4 text-accent focus:ring-accent border-color rounded"
-                    defaultChecked
                   />
                   <label htmlFor="showLogo" className="ml-2 text-sm text-secondary">
                     Show business logo
@@ -212,8 +223,9 @@ export default function TemplatesTab({
                   <input
                     type="checkbox"
                     id="showQr"
+                    checked={layoutOptions.showQr}
+                    onChange={(e) => setLayoutOptions({...layoutOptions, showQr: e.target.checked})}
                     className="h-4 w-4 text-accent focus:ring-accent border-color rounded"
-                    defaultChecked
                   />
                   <label htmlFor="showQr" className="ml-2 text-sm text-secondary">
                     Include QR code
@@ -223,6 +235,8 @@ export default function TemplatesTab({
                   <input
                     type="checkbox"
                     id="compactMode"
+                    checked={layoutOptions.compactMode}
+                    onChange={(e) => setLayoutOptions({...layoutOptions, compactMode: e.target.checked})}
                     className="h-4 w-4 text-accent focus:ring-accent border-color rounded"
                   />
                   <label htmlFor="compactMode" className="ml-2 text-sm text-secondary">
@@ -234,9 +248,11 @@ export default function TemplatesTab({
 
             <div className="flex justify-end">
               <button
-                className="px-6 py-3 rounded-lg font-medium transition-colors duration-200 bg-accent text-white focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                onClick={handleCustomizationsSubmit}
+                disabled={saving}
+                className="px-6 py-3 rounded-lg font-medium transition-colors duration-200 bg-accent text-white focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save Customizations
+                {saving ? 'Saving...' : 'Save Customizations'}
               </button>
             </div>
           </div>

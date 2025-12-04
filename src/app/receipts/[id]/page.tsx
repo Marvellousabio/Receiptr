@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { PrinterIcon, PhoneIcon, EnvelopeIcon, LinkIcon, DocumentArrowDownIcon, PhotoIcon, QrCodeIcon, ShareIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import QRCode from 'qrcode';
+import ReceiptTemplate from '@/components/ReceiptTemplate';
 
 interface Receipt {
   _id: string;
@@ -28,25 +28,40 @@ interface Receipt {
   };
 }
 
+interface User {
+  selectedTemplate: string;
+  customTemplate: {
+    colors: {
+      primary: string;
+      secondary: string;
+      accent: string;
+    };
+    font: string;
+    layout: {
+      showLogo: boolean;
+      showQr: boolean;
+      compactMode: boolean;
+    };
+  };
+  businessName: string;
+  address: string;
+  phone: string;
+  logoUrl: string;
+}
+
 export default function ReceiptView() {
-   const params = useParams();
-   const [receipt, setReceipt] = useState<Receipt | null>(null);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState('');
-   const [qrCodeUrl, setQrCodeUrl] = useState('');
-   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+    const params = useParams();
+    const [receipt, setReceipt] = useState<Receipt | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [shareMenuOpen, setShareMenuOpen] = useState(false);
 
   useEffect(() => {
     if (params.id) {
       fetchReceipt();
     }
   }, [params.id]);
-
-  useEffect(() => {
-    if (receipt) {
-      generateQRCode();
-    }
-  }, [receipt]);
 
   const fetchReceipt = async () => {
     try {
@@ -59,27 +74,17 @@ export default function ReceiptView() {
       }
 
       setReceipt(data.receipt);
+
+      // Fetch user data for template
+      const userResponse = await fetch('/api/user');
+      const userData = await userResponse.json();
+      if (userResponse.ok) {
+        setUser(userData.user);
+      }
     } catch (error) {
       setError('Failed to load receipt');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const generateQRCode = async () => {
-    try {
-      const url = window.location.href;
-      const qrCodeDataUrl = await QRCode.toDataURL(url, {
-        width: 128,
-        margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        }
-      });
-      setQrCodeUrl(qrCodeDataUrl);
-    } catch (error) {
-      console.error('Failed to generate QR code:', error);
     }
   };
 
@@ -272,105 +277,96 @@ export default function ReceiptView() {
         </div>
 
         {/* Receipt */}
-        <div className="bg-secondary shadow-lg rounded-lg overflow-hidden">
-          <div className="p-8" id="receipt-content">
-            {/* Header */}
-            <div className="text-center mb-8">
-              {receipt.userId.logoUrl && (
-                <img
-                  src={receipt.userId.logoUrl}
-                  alt="Business Logo"
-                  className="w-20 h-20 mx-auto mb-4 object-contain"
-                />
-              )}
-              <h1 className="text-3xl font-bold text-primary mb-2">
-                {receipt.userId.businessName || 'Business Name'}
-              </h1>
-              {receipt.userId.address && (
-                <p className="text-secondary mb-1">{receipt.userId.address}</p>
-              )}
-              {receipt.userId.phone && (
-                <p className="text-secondary mb-1">{receipt.userId.phone}</p>
-              )}
-              <div className="text-secondary">
-                <p>Receipt #{receipt.receiptNumber}</p>
-                <p>{new Date(receipt.createdAt).toLocaleDateString()}</p>
-              </div>
-            </div>
-
-            {/* Customer Info */}
-            <div className="mb-8">
-              <h2 className="text-lg font-semibold text-primary mb-2">Customer</h2>
-              <p className="text-secondary">{receipt.customerName}</p>
-            </div>
-
-            {/* Items Table */}
-            <div className="mb-8">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-color">
-                    <th className="text-left py-2 font-semibold">Item</th>
-                    <th className="text-center py-2 font-semibold">Qty</th>
-                    <th className="text-right py-2 font-semibold">Price</th>
-                    <th className="text-right py-2 font-semibold">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {receipt.items.map((item, index) => (
-                    <tr key={index} className="border-b border-color">
-                      <td className="py-2">{item.description}</td>
-                      <td className="text-center py-2">{item.quantity}</td>
-                      <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
-                      <td className="text-right py-2">₦{(item.quantity * item.price).toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Summary */}
-            <div className="border-t-2 border-color pt-4">
-              <div className="flex justify-between mb-2">
-                <span className="font-medium">Subtotal:</span>
-                <span>₦{receipt.subtotal.toLocaleString()}</span>
-              </div>
-              {receipt.vat > 0 && (
-                <div className="flex justify-between mb-2">
-                  <span className="font-medium">VAT ({receipt.userId.vatRate}%):</span>
-                  <span>₦{receipt.vat.toLocaleString()}</span>
+        {user && receipt ? (
+          <ReceiptTemplate receipt={receipt} user={user}>
+            <div className="p-8" id="receipt-content">
+              {/* Header */}
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-primary mb-2">
+                  {receipt.userId.businessName || 'Business Name'}
+                </h1>
+                {receipt.userId.address && (
+                  <p className="text-secondary mb-1">{receipt.userId.address}</p>
+                )}
+                {receipt.userId.phone && (
+                  <p className="text-secondary mb-1">{receipt.userId.phone}</p>
+                )}
+                <div className="text-secondary">
+                  <p>Receipt #{receipt.receiptNumber}</p>
+                  <p>{new Date(receipt.createdAt).toLocaleDateString()}</p>
                 </div>
-              )}
-              <div className="flex justify-between text-xl font-bold border-t border-color pt-2">
-                <span>Total:</span>
-                <span>₦{receipt.total.toLocaleString()}</span>
               </div>
-              <div className="mt-2 text-sm text-secondary">
-                <span>Payment Method: {receipt.paymentMethod}</span>
-              </div>
-            </div>
 
-            {/* Footer */}
-            <div className="text-center mt-8 text-secondary">
-              <p className="mb-2">Thank you for your business!</p>
-              <p className="text-sm">This receipt was generated electronically and is valid without signature.</p>
-              <div className="mt-4 flex flex-col items-center gap-2">
-                {qrCodeUrl && (
-                  <div className="mb-2">
-                    <p className="text-xs mb-1">Scan QR code to view online:</p>
-                    <img
-                      src={qrCodeUrl}
-                      alt="QR Code for receipt"
-                      className="w-16 h-16 mx-auto"
-                    />
+              {/* Customer Info */}
+              <div className="mb-8">
+                <h2 className="text-lg font-semibold text-primary mb-2">Customer</h2>
+                <p className="text-secondary">{receipt.customerName}</p>
+              </div>
+
+              {/* Items Table */}
+              <div className="mb-8">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b-2 border-color">
+                      <th className="text-left py-2 font-semibold">Item</th>
+                      <th className="text-center py-2 font-semibold">Qty</th>
+                      <th className="text-right py-2 font-semibold">Price</th>
+                      <th className="text-right py-2 font-semibold">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {receipt.items.map((item, index) => (
+                      <tr key={index} className="border-b border-color">
+                        <td className="py-2">{item.description}</td>
+                        <td className="text-center py-2">{item.quantity}</td>
+                        <td className="text-right py-2">₦{item.price.toLocaleString()}</td>
+                        <td className="text-right py-2">₦{(item.quantity * item.price).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Summary */}
+              <div className="border-t-2 border-color pt-4">
+                <div className="flex justify-between mb-2">
+                  <span className="font-medium">Subtotal:</span>
+                  <span>₦{receipt.subtotal.toLocaleString()}</span>
+                </div>
+                {receipt.vat > 0 && (
+                  <div className="flex justify-between mb-2">
+                    <span className="font-medium">VAT ({receipt.userId.vatRate}%):</span>
+                    <span>₦{receipt.vat.toLocaleString()}</span>
                   </div>
                 )}
-                <p className="text-xs">
-                  View online: {window.location.href}
-                </p>
+                <div className="flex justify-between text-xl font-bold border-t border-color pt-2">
+                  <span>Total:</span>
+                  <span>₦{receipt.total.toLocaleString()}</span>
+                </div>
+                <div className="mt-2 text-sm text-secondary">
+                  <span>Payment Method: {receipt.paymentMethod}</span>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="text-center mt-8 text-secondary">
+                <p className="mb-2">Thank you for your business!</p>
+                <p className="text-sm">This receipt was generated electronically and is valid without signature.</p>
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <p className="text-xs">
+                    View online: {window.location.href}
+                  </p>
+                </div>
               </div>
             </div>
+          </ReceiptTemplate>
+        ) : (
+          <div className="bg-secondary shadow-lg rounded-lg overflow-hidden">
+            <div className="p-8" id="receipt-content">
+              <div className="text-center">Loading template...</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Print Styles */}

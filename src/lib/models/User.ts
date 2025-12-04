@@ -38,6 +38,19 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'classic',
   },
+  customTemplate: {
+    colors: {
+      primary: { type: String, default: '#1f2937' },
+      secondary: { type: String, default: '#f9fafb' },
+      accent: { type: String, default: '#3b82f6' },
+    },
+    font: { type: String, default: 'inter' },
+    layout: {
+      showLogo: { type: Boolean, default: true },
+      showQr: { type: Boolean, default: true },
+      compactMode: { type: Boolean, default: false },
+    },
+  },
   businesses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Business',

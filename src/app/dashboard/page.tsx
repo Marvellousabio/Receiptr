@@ -49,6 +49,11 @@ export default function Dashboard() {
      accent: '#3b82f6'
    });
    const [customFont, setCustomFont] = useState('inter');
+   const [layoutOptions, setLayoutOptions] = useState({
+     showLogo: true,
+     showQr: true,
+     compactMode: false,
+   });
    const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
@@ -73,6 +78,37 @@ export default function Dashboard() {
       setVatRate(session.user.vatRate || 0);
       setSelectedTemplate(session.user.selectedTemplate || 'classic');
     }
+  }, [session]);
+
+  useEffect(() => {
+    const fetchUserTemplate = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch('/api/user/template');
+          if (response.ok) {
+            const data = await response.json();
+            const user = data.user;
+            if (user.customTemplate) {
+              setCustomColors(user.customTemplate.colors || {
+                primary: '#1f2937',
+                secondary: '#6b7280',
+                accent: '#3b82f6'
+              });
+              setCustomFont(user.customTemplate.font || 'inter');
+              setLayoutOptions(user.customTemplate.layout || {
+                showLogo: true,
+                showQr: true,
+                compactMode: false,
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch user template:', error);
+        }
+      }
+    };
+
+    fetchUserTemplate();
   }, [session]);
 
   const fetchReceipts = async () => {
@@ -126,6 +162,42 @@ export default function Dashboard() {
       });
 
       setSuccess('Template updated successfully!');
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCustomizationsSubmit = async () => {
+    setSaving(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch('/api/user/template', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedTemplate,
+          customTemplate: {
+            colors: customColors,
+            font: customFont,
+            layout: layoutOptions,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to update customizations');
+        return;
+      }
+
+      setSuccess('Customizations saved successfully!');
     } catch (error) {
       setError('An error occurred. Please try again.');
     } finally {
@@ -282,9 +354,12 @@ export default function Dashboard() {
               setCustomColors={setCustomColors}
               customFont={customFont}
               setCustomFont={setCustomFont}
+              layoutOptions={layoutOptions}
+              setLayoutOptions={setLayoutOptions}
               showAdvanced={showAdvanced}
               setShowAdvanced={setShowAdvanced}
               handleTemplateSubmit={handleTemplateSubmit}
+              handleCustomizationsSubmit={handleCustomizationsSubmit}
               saving={saving}
               error={error}
               success={success}

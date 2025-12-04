@@ -1,6 +1,6 @@
 /* Added for newsletter background image */
 .newsletter-bg {
-  background-image: url('/newsletter.jpg');
+  background-image: url("/newsletter.jpg");
   background-size: cover;
   background-position: center;
 }
@@ -26,15 +26,67 @@
   --accent: #0d6efd;
 }
 
-.bg-primary { background-color: var(--bg-primary); }
-.bg-secondary { background-color: var(--bg-secondary); }
-.bg-accent { background-color: var(--accent); }
-.bg-accent:hover { background-color: #0056b3; }
-.bg-success { background-color: var(--success); }
-.bg-info { background-color: var(--info); }
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-accent { color: var(--accent); }
-.border-color { border-color: var(--border); }
-.border-accent { border-color: var(--accent); }
-.accent { color: var(--accent); }
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+.bg-accent {
+  background-color: var(--accent);
+}
+.bg-accent:hover {
+  background-color: #0056b3;
+}
+.bg-success {
+  background-color: var(--success);
+}
+.bg-info {
+  background-color: var(--info);
+}
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-accent {
+  color: var(--accent);
+}
+.border-color {
+  border-color: var(--border);
+}
+.border-accent {
+  border-color: var(--accent);
+}
+.accent {
+  color: var(--accent);
+}
+
+/* Receipt Template Styles */
+.receipt-template {
+  --primary-color: #1f2937;
+  --secondary-color: #f9fafb;
+  --accent-color: #3b82f6;
+}
+
+.receipt-template.modern-template {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border: 2px solid var(--accent-color);
+}
+
+.receipt-template.minimal-template {
+  background-color: var(--secondary-color);
+  border: 1px dashed var(--primary-color);
+}
+
+.receipt-template.corporate-template {
+  background-color: var(--secondary-color);
+  border-left: 4px solid var(--accent-color);
+}
+
+.receipt-template.compact {
+  font-size: 0.875rem;
+  padding: 1rem;
+}
